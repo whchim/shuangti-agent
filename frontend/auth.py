@@ -67,18 +67,65 @@ def require_auth():
 
 
 def show_login_page():
+    """渲染登录/注册页面。
+
+    使用 session_state.auth_tab 控制当前显示的标签页 (0=登录, 1=注册)，
+    替代 st.tabs() 以支持注册成功后编程切换到登录栏。
+
+    注册成功后的流程:
+      1. 将账号密码存入 session_state (prefill_username / prefill_password)
+      2. 切换 auth_tab 到登录栏
+      3. 登录表单自动填充注册时的账号密码
+      4. 等待用户手动点击「登录」按钮，不自动提交
+    """
     _, center, _ = st.columns([1, 1.5, 1])
     with center:
         st.markdown('<div class="auth-card">', unsafe_allow_html=True)
         st.markdown('<p class="auth-header">🤖 双体智能体系统</p>', unsafe_allow_html=True)
         st.markdown('<p class="auth-subtitle">双体软件精英产业学院 · 智能对话平台</p>', unsafe_allow_html=True)
 
-        tab1, tab2 = st.tabs(["🔑 登录", "📝 注册"])
+        # ── 标签页状态管理 ──
+        if "auth_tab" not in st.session_state:
+            st.session_state.auth_tab = 0  # 0=登录, 1=注册
 
-        with tab1:
+        # 注册成功后用于自动填充登录栏的账号密码
+        prefill_user = st.session_state.get("prefill_username", "")
+        prefill_pw = st.session_state.get("prefill_password", "")
+
+        # ── 自定义标签栏 (按钮模拟 tab，支持编程切换) ──
+        col_t1, col_t2 = st.columns(2)
+        with col_t1:
+            if st.button("🔑 登录", key="tab_btn_login", use_container_width=True,
+                         type="primary" if st.session_state.auth_tab == 0 else "secondary"):
+                st.session_state.auth_tab = 0
+                st.rerun()
+        with col_t2:
+            if st.button("📝 注册", key="tab_btn_register", use_container_width=True,
+                         type="primary" if st.session_state.auth_tab == 1 else "secondary"):
+                st.session_state.auth_tab = 1
+                st.rerun()
+
+        st.markdown("---")
+
+        # ── 登录栏 ──
+        if st.session_state.auth_tab == 0:
+            # 注册成功后显示提示，引导用户点击登录
+            if st.session_state.get("just_registered"):
+                st.success("✅ 注册成功！已为您填充账号信息，请点击「登录」按钮完成登录。")
+                st.session_state.pop("just_registered", None)
+
             with st.form("login_form"):
-                username = st.text_input("用户名", placeholder="请输入用户名（1-10位，含英文、数字）")
-                password = st.text_input("密码", type="password", placeholder="请输入密码（6-12位，含英文、数字）")
+                username = st.text_input(
+                    "用户名",
+                    value=prefill_user,
+                    placeholder="请输入用户名（1-10位，含英文、数字）",
+                )
+                password = st.text_input(
+                    "密码",
+                    type="password",
+                    value=prefill_pw,
+                    placeholder="请输入密码（6-12位，含英文、数字）",
+                )
                 submitted = st.form_submit_button("登 录", type="primary", use_container_width=True)
                 if submitted:
                     if not username or not password:
@@ -88,17 +135,21 @@ def show_login_page():
                             result = api_login(username, password)
                             st.session_state.token = result["token"]
                             st.session_state.user = result["user"]
+                            # 清除预填充数据
+                            st.session_state.pop("prefill_username", None)
+                            st.session_state.pop("prefill_password", None)
                             st.rerun()
                         except Exception as e:
                             st.error(str(e))
 
-        with tab2:
+        # ── 注册栏 ──
+        else:
             with st.form("register_form"):
-                st.caption("创建新账户，注册后自动登录")
+                st.caption("创建新账户，注册后跳转至登录")
                 username = st.text_input("用户名", placeholder="1-10位，含英文、数字", key="reg_username")
                 password = st.text_input("密码", type="password", placeholder="6-12位，含英文、数字", key="reg_password")
                 password2 = st.text_input("确认密码", type="password", placeholder="请再次确认密码", key="reg_password2")
-                submitted = st.form_submit_button("注 册 并 登 录", type="primary", use_container_width=True)
+                submitted = st.form_submit_button("注 册", type="primary", use_container_width=True)
                 if submitted:
                     if not all([username, password, password2]):
                         st.error("请填写所有字段")
@@ -111,14 +162,15 @@ def show_login_page():
                     else:
                         try:
                             api_register(username, password, "")
-                            # 注册成功后自动登录
-                            result = api_login(username, password)
-                            st.session_state.token = result["token"]
-                            st.session_state.user = result["user"]
-                            st.success("注册成功，正在进入系统...")
+                            # 注册成功：存储账号密码用于自动填充登录栏
+                            st.session_state.prefill_username = username
+                            st.session_state.prefill_password = password
+                            st.session_state.just_registered = True
+                            st.session_state.auth_tab = 0  # 切换到登录栏
                             st.rerun()
                         except Exception as e:
                             st.error(str(e))
+
         st.markdown('</div>', unsafe_allow_html=True)
 
 
