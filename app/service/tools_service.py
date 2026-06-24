@@ -129,12 +129,12 @@ async def start_interview(job_title: str, user_id: str) -> dict:
 
 async def process_interview_answer(session_id: str, answer: str,
                                    question_number: int, job_title: str,
-                                   llm: BaseLLM) -> dict:
+                                   user_id: str, llm: BaseLLM) -> dict:
     # 保存面试消息
     db = await get_db()
     await db.execute(
-        "INSERT INTO messages (id, session_id, user_id, role, content, round_number) VALUES (?, ?, ?, 'user', ?, ?)",
-        (uuid4().hex, session_id, "", answer, question_number),
+        "INSERT INTO messages (id, session_id, user_id, role, content) VALUES (?, ?, ?, 'user', ?)",
+        (uuid4().hex, session_id, user_id, answer),
     )
 
     total = 5

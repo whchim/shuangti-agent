@@ -1,8 +1,12 @@
 """用户认证 API"""
-from fastapi import APIRouter, HTTPException
-from app.models.user import UserRegisterRequest, UserLoginRequest, UserProfile, UserProfileUpdate
+from fastapi import APIRouter, HTTPException, Depends
+from app.models.user import (
+    UserRegisterRequest, UserLoginRequest, ChangePasswordRequest,
+)
 from app.core.dependencies import get_current_user
-from app.service.auth_service import register_user, login_user, get_user_profile, update_user_profile
+from app.service.auth_service import (
+    register_user, login_user, change_password,
+)
 
 router = APIRouter(prefix="/api/auth", tags=["用户认证"])
 
@@ -10,7 +14,7 @@ router = APIRouter(prefix="/api/auth", tags=["用户认证"])
 @router.post("/register")
 async def register(req: UserRegisterRequest):
     try:
-        user = await register_user(req.username, req.email, req.password)
+        user = await register_user(req.username, req.email or "", req.password)
         return user
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -27,5 +31,15 @@ async def login(req: UserLoginRequest):
 
 @router.post("/logout")
 async def logout():
-    # token 黑名单为可选功能，此处预留
     return {"message": "已退出登录"}
+
+
+@router.post("/change-password")
+async def change_password_endpoint(
+    req: ChangePasswordRequest, user: dict = Depends(get_current_user),
+):
+    try:
+        await change_password(user["user_id"], req.old_password, req.new_password)
+        return {"message": "密码修改成功"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))

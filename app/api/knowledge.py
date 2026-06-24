@@ -6,11 +6,6 @@ from app.service.knowledge_service import upload_and_index, list_documents, dele
 router = APIRouter(prefix="/api/knowledge", tags=["知识库管理"])
 
 
-def get_llm():
-    from app.llm.zhipu import ZhipuAdapter
-    return ZhipuAdapter()
-
-
 @router.post("/upload")
 async def upload_document(
     file: UploadFile = File(...),
@@ -21,7 +16,7 @@ async def upload_document(
 
     content = await file.read()
     try:
-        result = await upload_and_index(content, file.filename, category, get_llm())
+        result = await upload_and_index(content, file.filename, category)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -44,7 +39,7 @@ async def remove_document(doc_id: str):
 @router.post("/reload")
 async def reload_documents():
     try:
-        result = await reload_all_documents(get_llm())
+        result = await reload_all_documents()
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

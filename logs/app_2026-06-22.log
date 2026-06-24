@@ -1,0 +1,39 @@
+2026-06-22 13:03:56.137 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-22 13:03:56.161 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-22 13:03:56.179 | INFO     | app.core.database:init_db:93 - 数据库表初始化完成
+2026-06-22 13:03:56.181 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-22 13:12:31.367 | INFO     | app.service.chat_service:get_or_create_session:42 - 创建新会话: c4ff6482aaef4ed2898a39d4ca87577c
+2026-06-22 14:55:14.461 | INFO     | app.service.chat_service:get_or_create_session:42 - 创建新会话: 4dbc1fdbe3a14382a605aaf9bbfcbd81
+2026-06-22 14:56:00.838 | INFO     | app.core.database:close_db:101 - 数据库连接已关闭
+2026-06-22 14:56:00.838 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-22 14:56:14.868 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-22 14:56:14.877 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-22 14:56:14.880 | INFO     | app.core.database:init_db:93 - 数据库表初始化完成
+2026-06-22 14:56:14.881 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-22 14:56:35.479 | INFO     | app.service.chat_service:get_or_create_session:42 - 创建新会话: 09cfc2b79c8d421fb84df247ad51be41
+2026-06-22 14:57:22.908 | INFO     | app.core.database:close_db:101 - 数据库连接已关闭
+2026-06-22 14:57:22.909 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-22 14:57:29.505 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-22 14:57:29.510 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-22 14:57:29.511 | INFO     | app.core.database:init_db:93 - 数据库表初始化完成
+2026-06-22 14:57:29.511 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-22 14:57:54.328 | INFO     | app.service.chat_service:get_or_create_session:42 - 创建新会话: a6544bfd4f47419fb1dbe5d328144d17
+2026-06-22 14:58:07.620 | INFO     | app.service.chat_service:get_or_create_session:42 - 创建新会话: 0c9cca6fae104e8c8936cf1a9a4b34f7
+2026-06-22 14:58:46.266 | INFO     | app.core.database:close_db:101 - 数据库连接已关闭
+2026-06-22 14:58:46.266 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-22 14:58:48.730 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-22 14:58:48.735 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-22 14:58:48.736 | INFO     | app.core.database:init_db:106 - 数据库表初始化完成
+2026-06-22 14:58:48.737 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-22 14:59:31.992 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-22 14:59:32.011 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-22 14:59:32.013 | INFO     | app.core.database:init_db:106 - 数据库表初始化完成
+2026-06-22 14:59:32.013 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-22 15:00:25.814 | INFO     | app.service.chat_service:get_or_create_session:42 - 创建新会话: b485a1169ab34787b91914fa1a64dbfc
+2026-06-22 15:00:55.317 | INFO     | app.service.chat_service:get_or_create_session:42 - 创建新会话: ea2ddb666bd9432ca9410ee731fe005b
+2026-06-22 15:04:05.767 | INFO     | app.core.database:close_db:114 - 数据库连接已关闭
+2026-06-22 15:04:05.768 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-22 15:04:08.460 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-22 15:04:08.466 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-22 15:04:08.468 | INFO     | app.core.database:init_db:106 - 数据库表初始化完成
+2026-06-22 15:04:08.468 | INFO     | app.main:lifespan:34 - 数据库初始化完成

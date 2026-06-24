@@ -42,7 +42,6 @@ class MessageItem(BaseModel):
     id: str
     role: str
     content: str
-    round_number: int
     created_at: str
 
 

@@ -19,8 +19,13 @@ router = APIRouter(prefix="/api/tools", tags=["特色工具"])
 
 
 def get_llm():
-    from app.llm.zhipu import ZhipuAdapter
-    return ZhipuAdapter()
+    from app.core.config import settings
+    if settings.default_llm_model == "deepseek":
+        from app.llm.deepseek import DeepSeekAdapter
+        return DeepSeekAdapter()
+    else:
+        from app.llm.zhipu import ZhipuAdapter
+        return ZhipuAdapter()
 
 
 # ===== 职业测评 =====
@@ -80,7 +85,7 @@ async def answer_interview(req: InterviewAnswerRequest, user: dict = Depends(get
     )
     count = (await cursor.fetchone())["count"]
 
-    result = await process_interview_answer(req.session_id, req.answer, count, job_title, get_llm())
+    result = await process_interview_answer(req.session_id, req.answer, count, job_title, user["user_id"], get_llm())
     return result
 
 

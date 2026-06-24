@@ -1,3 +1,5 @@
+import asyncio
+from zhipuai import ZhipuAI
 from app.llm.base import BaseLLM, LLMResponse
 from app.core.config import settings
 
@@ -5,18 +7,38 @@ from app.core.config import settings
 class ZhipuAdapter(BaseLLM):
     """智谱 GLM 适配器"""
 
+    def __init__(self):
+        self.client = ZhipuAI(api_key=settings.zhipu_api_key)
+
     @property
     def model_name(self) -> str:
         return "zhipu"
 
     async def chat(self, messages: list[dict], **kwargs) -> LLMResponse:
-        # TODO: 接入智谱官方 SDK
-        raise NotImplementedError("智谱适配器待实现")
+        response = await asyncio.to_thread(
+            self.client.chat.completions.create,
+            model="glm-4-flash",
+            messages=messages,
+            temperature=0.7,
+            max_tokens=2048,
+        )
+        return LLMResponse(
+            content=response.choices[0].message.content,
+            model=response.model,
+            usage={
+                "prompt_tokens": response.usage.prompt_tokens,
+                "completion_tokens": response.usage.completion_tokens,
+            } if response.usage else None,
+        )
 
     async def chat_stream(self, messages: list[dict], **kwargs):
-        # TODO: 接入智谱流式 API
-        raise NotImplementedError("智谱流式适配器待实现")
-
-    async def generate_embedding(self, text: str) -> list[float]:
-        # TODO: 调用智谱 embedding-2 API
-        raise NotImplementedError("智谱 Embedding 待实现")
+        response = self.client.chat.completions.create(
+            model="glm-4-flash",
+            messages=messages,
+            temperature=0.7,
+            max_tokens=2048,
+            stream=True,
+        )
+        for chunk in response:
+            if chunk.choices[0].delta.content:
+                yield chunk.choices[0].delta.content

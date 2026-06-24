@@ -9,8 +9,8 @@ class Settings(BaseSettings):
     deepseek_base_url: str = "https://api.deepseek.com/v1"
 
     # Embedding
-    zhipu_embedding_model: str = "embedding-2"
-    deepseek_embedding_model: str = "text-embedding-ada-002"
+    bailian_api_key: str = ""
+    bailian_embedding_model: str = "text-embedding-v4"
 
     # 默认模型
     default_llm_model: str = "zhipu"

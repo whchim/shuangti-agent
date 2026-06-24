@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -9,4 +10,6 @@ class ModelConfig(BaseModel):
 
 
 class ModelConfigUpdate(BaseModel):
-    model: str
+    default_llm_model: Optional[str] = None
+    zhipu_api_key: Optional[str] = None
+    deepseek_api_key: Optional[str] = None

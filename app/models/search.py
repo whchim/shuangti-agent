@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -27,4 +28,6 @@ class SearchConfig(BaseModel):
 
 
 class SearchConfigUpdate(BaseModel):
-    default_engine: str = "tavily"
+    default_search_engine: Optional[str] = None
+    tavily_api_key: Optional[str] = None
+    bing_search_api_key: Optional[str] = None

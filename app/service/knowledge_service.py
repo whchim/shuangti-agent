@@ -9,12 +9,11 @@ from app.rag.loader import load_document
 from app.rag.splitter import split_document
 from app.rag.store import add_documents, delete_documents, get_or_create_collection
 from app.rag.embeddings import embed_texts
-from app.llm.base import BaseLLM
 
 UPLOAD_DIR = "data/documents"
 
 
-async def upload_and_index(file_content: bytes, filename: str, category: str, llm: BaseLLM) -> dict:
+async def upload_and_index(file_content: bytes, filename: str, category: str) -> dict:
     """上传文档并向量化入 ChromaDB"""
     doc_id = uuid4().hex
 
@@ -31,7 +30,7 @@ async def upload_and_index(file_content: bytes, filename: str, category: str, ll
     chunks = split_document(text)
 
     # 向量化
-    embeddings = await embed_texts(chunks, llm)
+    embeddings = await embed_texts(chunks)
 
     # 存入 ChromaDB
     chunk_ids = [f"{doc_id}_{i}" for i in range(len(chunks))]
@@ -78,7 +77,7 @@ async def delete_document(doc_id: str) -> bool:
     return True
 
 
-async def reload_all_documents(llm: BaseLLM) -> dict:
+async def reload_all_documents() -> dict:
     """重新向量化全部文档"""
     db = await get_db()
     cursor = await db.execute("SELECT id, filename, category FROM knowledge_documents")
@@ -91,7 +90,7 @@ async def reload_all_documents(llm: BaseLLM) -> dict:
                 file_path = os.path.join(UPLOAD_DIR, f)
                 text = await load_document(file_path)
                 chunks = split_document(text)
-                embeddings = await embed_texts(chunks, llm)
+                embeddings = await embed_texts(chunks)
                 chunk_ids = [f"{doc['id']}_{i}" for i in range(len(chunks))]
                 metadatas = [
                     {"filename": doc["filename"], "category": doc["category"], "doc_id": doc["id"]}

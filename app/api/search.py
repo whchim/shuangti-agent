@@ -19,7 +19,11 @@ async def get_config():
 
 @router.put("/config", response_model=SearchConfig)
 async def update_config(req: SearchConfigUpdate):
-    # 运行时切换搜索引擎（通过全局配置）
     from app.core.config import settings
-    settings.default_search_engine = req.default_engine
+    if req.default_search_engine:
+        settings.default_search_engine = req.default_search_engine
+    if req.tavily_api_key is not None:
+        settings.tavily_api_key = req.tavily_api_key
+    if req.bing_search_api_key is not None:
+        settings.bing_search_api_key = req.bing_search_api_key
     return get_search_config()

@@ -1,0 +1,114 @@
+2026-06-23 11:34:23.204 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-23 11:34:23.216 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-23 11:34:23.216 | INFO     | app.core.database:init_db:106 - 数据库表初始化完成
+2026-06-23 11:34:23.216 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-23 11:34:28.054 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-23 11:37:15.829 | INFO     | app.service.chat_service:get_or_create_session:43 - 创建新会话: e24f53b8d45d430aa939e6180a60ffc4
+2026-06-23 11:37:30.845 | INFO     | app.service.chat_service:get_or_create_session:43 - 创建新会话: c8917ef7463c4071bbc64a5803943e93
+2026-06-23 13:53:59.726 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-23 13:53:59.730 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-23 13:53:59.730 | INFO     | app.core.database:init_db:106 - 数据库表初始化完成
+2026-06-23 13:53:59.730 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-23 13:54:35.731 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-23 13:56:52.817 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-23 13:56:52.821 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-23 13:56:52.821 | INFO     | app.core.database:init_db:106 - 数据库表初始化完成
+2026-06-23 13:56:52.822 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-23 13:57:22.763 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-23 14:04:40.913 | ERROR    | app.search.tavily_search:tavily_search:27 - Tavily 搜索失败: 401
+2026-06-23 14:04:47.125 | ERROR    | app.search.bing_search:bing_search:22 - Bing 搜索失败: 401
+2026-06-23 14:22:34.478 | INFO     | app.service.chat_service:get_or_create_session:43 - 创建新会话: 5b4f874446a94c51baf25a61922e517d
+2026-06-23 14:25:04.214 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-23 14:25:04.221 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-23 14:25:04.227 | INFO     | app.core.database:init_db:106 - 数据库表初始化完成
+2026-06-23 14:25:04.228 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-23 14:25:09.129 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-23 14:29:13.032 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-23 14:29:13.038 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-23 14:29:13.046 | INFO     | app.core.database:init_db:106 - 数据库表初始化完成
+2026-06-23 14:29:13.046 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-23 14:29:45.424 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-23 14:31:43.496 | INFO     | app.service.chat_service:get_or_create_session:43 - 创建新会话: 35c7216dedb44805952396013cb8d7a4
+2026-06-23 14:35:42.341 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-23 14:35:42.344 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-23 14:35:42.345 | INFO     | app.core.database:init_db:111 - 数据库表初始化完成
+2026-06-23 14:35:42.345 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-23 14:35:46.384 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-23 14:38:54.247 | INFO     | app.service.chat_service:get_or_create_session:43 - 创建新会话: db379e9f36b54eb1ad519d1c8104928a
+2026-06-23 14:39:59.818 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-23 14:39:59.822 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-23 14:39:59.823 | INFO     | app.core.database:init_db:111 - 数据库表初始化完成
+2026-06-23 14:39:59.823 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-23 14:41:28.534 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-23 14:42:37.411 | INFO     | app.service.chat_service:get_or_create_session:43 - 创建新会话: 306915a5923e46b4b59c1ee0b743c834
+2026-06-23 14:45:03.814 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-23 14:45:03.818 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-23 14:45:03.819 | INFO     | app.core.database:init_db:138 - 数据库表初始化完成
+2026-06-23 14:45:03.819 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-23 14:45:09.202 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-23 14:47:28.866 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-23 14:47:28.870 | INFO     | app.core.database:get_db:20 - 数据库连接已建立
+2026-06-23 14:47:28.875 | INFO     | app.core.database:init_db:138 - 数据库表初始化完成
+2026-06-23 14:47:28.875 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-23 14:48:43.321 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-23 14:53:27.478 | INFO     | app.service.chat_service:get_or_create_session:43 - 创建新会话: 1d391c8cb19141168b31dd7c794711a7
+2026-06-23 14:56:47.956 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-23 14:56:47.960 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: C:\Users\Administrator\OneDrive\Desktop\双体系统\data\sqlite\shuangti.db
+2026-06-23 14:56:47.961 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-23 14:56:47.961 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-23 14:56:51.832 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-23 14:58:52.854 | INFO     | app.service.chat_service:get_or_create_session:43 - 创建新会话: d6844d2f924844f1a3b7142e31e1771e
+2026-06-23 15:02:35.881 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-23 15:02:35.886 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: C:\Users\Administrator\OneDrive\Desktop\双体系统\data\sqlite\shuangti.db
+2026-06-23 15:02:35.893 | INFO     | app.core.database:init_db:145 - 数据库表初始化完成
+2026-06-23 15:02:35.893 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-23 15:02:40.681 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-23 15:03:10.412 | INFO     | app.service.chat_service:get_or_create_session:43 - 创建新会话: 846b752909bf44b78e06cc4ec0d8f74a
+2026-06-23 15:04:59.464 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-23 15:04:59.468 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: C:\Users\Administrator\OneDrive\Desktop\双体系统\data\sqlite\shuangti.db
+2026-06-23 15:04:59.468 | INFO     | app.core.database:init_db:145 - 数据库表初始化完成
+2026-06-23 15:04:59.468 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-23 15:05:05.145 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-23 15:05:29.739 | INFO     | app.service.chat_service:get_or_create_session:43 - 创建新会话: bb21e80b0b894631b14847df41828439
+2026-06-23 15:06:37.767 | INFO     | app.service.chat_service:get_or_create_session:43 - 创建新会话: a5ce7bfa75c74dedad148146ab2c8093
+2026-06-23 15:10:28.709 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-23 15:10:28.714 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: C:\Users\Administrator\OneDrive\Desktop\双体系统\data\sqlite\shuangti.db
+2026-06-23 15:10:28.715 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-23 15:10:28.715 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-23 15:10:34.019 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-23 15:11:17.305 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 64cffec9525042539a36626a82a24a1a
+2026-06-23 15:11:18.023 | WARNING  | app.service.chat_service:process_chat:188 - 知识库检索失败: 百炼 Embedding 失败: Invalid API-key provided.
+2026-06-23 15:17:57.419 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: c5511e26744445afb7763798b53824ac
+2026-06-23 15:21:31.089 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 1ccdad6aeb44498f8ef437cc99525ec6
+2026-06-23 15:45:19.174 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: d3e110e71f7f4dfd92cdc023f65ad39a
+2026-06-23 15:48:31.213 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: c172f5e2b5ec43c9982d8bf881cf715d
+2026-06-23 15:50:50.376 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 5912020e20854038bca597889375df30
+2026-06-23 15:55:43.743 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: b59d7e2be354443599dedc79589d33c0
+2026-06-23 15:55:44.502 | WARNING  | app.service.chat_service:process_chat:188 - 知识库检索失败: 百炼 Embedding 失败: Invalid API-key provided.
+2026-06-23 15:55:57.072 | WARNING  | app.service.chat_service:process_chat:188 - 知识库检索失败: 百炼 Embedding 失败: Invalid API-key provided.
+2026-06-23 16:03:47.376 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: f935223ca5a24ed6a5cca84bb87381f7
+2026-06-23 16:03:49.508 | WARNING  | app.service.chat_service:process_chat:188 - 知识库检索失败: 百炼 Embedding 失败: Invalid API-key provided.
+2026-06-23 16:05:31.956 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: f0eaaf457d35490290836e0481ff12f1
+2026-06-23 16:05:33.179 | WARNING  | app.service.chat_service:process_chat:188 - 知识库检索失败: 百炼 Embedding 失败: Invalid API-key provided.
+2026-06-23 16:05:48.840 | WARNING  | app.service.chat_service:process_chat:188 - 知识库检索失败: 百炼 Embedding 失败: Invalid API-key provided.
+2026-06-23 16:07:51.544 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 71f16e35e4e14f5ea273e54dc641f74c
+2026-06-23 16:07:52.277 | WARNING  | app.service.chat_service:process_chat:188 - 知识库检索失败: 百炼 Embedding 失败: Invalid API-key provided.
+2026-06-23 16:09:29.817 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 2b8259bab65d4012992829e31b3c223b
+2026-06-23 16:09:31.757 | WARNING  | app.service.chat_service:process_chat:188 - 知识库检索失败: 百炼 Embedding 失败: Invalid API-key provided.
+2026-06-23 16:12:09.615 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 0e5cd20990de4fea899473121fdc0aca
+2026-06-23 16:12:10.369 | WARNING  | app.service.chat_service:process_chat:188 - 知识库检索失败: 百炼 Embedding 失败: Invalid API-key provided.
+2026-06-23 16:12:21.951 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 6aa471f980c14bd2a101bf520bd2be22
+2026-06-23 16:12:22.687 | WARNING  | app.service.chat_service:process_chat:188 - 知识库检索失败: 百炼 Embedding 失败: Invalid API-key provided.
+2026-06-23 16:14:43.338 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 414ccc4d8f2c43c4b63a75aea11209e8
+2026-06-23 16:14:44.165 | WARNING  | app.service.chat_service:process_chat:188 - 知识库检索失败: 百炼 Embedding 失败: Invalid API-key provided.
+2026-06-23 16:16:13.972 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 9d170302a2da48908c9534818e978448
+2026-06-23 16:16:15.174 | WARNING  | app.service.chat_service:process_chat:188 - 知识库检索失败: 百炼 Embedding 失败: Invalid API-key provided.
+2026-06-23 16:19:01.061 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 6fd2da38d6c1430a8f2b29947692e28a
+2026-06-23 16:20:26.120 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: af0508846b9e493cb385e98def310828
+2026-06-23 16:22:59.837 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 7f7e2b6cd02a4b70987317db5b31f2c9
+2026-06-23 16:24:08.847 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 2ebc5bdb148b48b3a18c99bb5cfb9217
+2026-06-23 16:29:12.869 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 34fe88892b61480ea1a104187fe5bfaa
+2026-06-23 16:34:48.739 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 9b83d5b9b8d34c20840c00b6d0eae731
+2026-06-23 16:37:39.823 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 55f6cdd8d69d4ddaabf236d823072e82
+2026-06-23 16:38:55.041 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: c888b8c5f4034b3fbc4a6d88695731b5
+2026-06-23 16:39:24.849 | INFO     | app.service.chat_service:get_or_create_session:40 - 创建新会话: 1f0a27155ef74c8aad2d6c04dc629ac9

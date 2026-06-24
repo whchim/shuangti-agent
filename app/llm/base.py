@@ -27,7 +27,3 @@ class BaseLLM(ABC):
     async def chat_stream(self, messages: list[dict], **kwargs):
         """发送对话请求，流式返回 token"""
         ...
-
-    async def generate_embedding(self, text: str) -> list[float]:
-        """生成文本向量，默认实现需子类覆盖"""
-        raise NotImplementedError

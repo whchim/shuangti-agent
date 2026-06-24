@@ -9,6 +9,7 @@ from app.core.database import get_db
 from app.llm.base import BaseLLM
 from app.rag.store import query_documents
 from app.rag.chain import build_prompt, format_sources
+from app.rag.embeddings import embed_query
 from app.search.tavily_search import tavily_search
 from app.search.bing_search import bing_search
 
@@ -20,9 +21,7 @@ HYBRID_SIMILARITY_THRESHOLD = 0.7
 
 async def get_or_create_session(user_id: str, session_id: Optional[str],
                                 message: str) -> str:
-    """获取或创建会话"""
     db = await get_db()
-
     if session_id:
         cursor = await db.execute(
             "SELECT id FROM sessions WHERE id = ? AND user_id = ?",
@@ -31,7 +30,6 @@ async def get_or_create_session(user_id: str, session_id: Optional[str],
         if await cursor.fetchone():
             return session_id
 
-    # 创建新会话
     session_id = uuid4().hex
     title = message[:20] + ("..." if len(message) > 20 else "")
     await db.execute(
@@ -44,16 +42,15 @@ async def get_or_create_session(user_id: str, session_id: Optional[str],
 
 
 async def save_message(session_id: str, user_id: str, role: str,
-                       content: str, round_number: int,
+                       content: str, round_number: int = 0,
                        embedding: Optional[list[float]] = None):
     """保存消息到数据库"""
     db = await get_db()
     msg_id = uuid4().hex
     embedding_json = json.dumps(embedding) if embedding else None
     await db.execute(
-        """INSERT INTO messages (id, session_id, user_id, role, content, round_number, vector_embedding)
-           VALUES (?, ?, ?, ?, ?, ?, ?)""",
-        (msg_id, session_id, user_id, role, content, round_number, embedding_json),
+        "INSERT INTO messages (id, session_id, user_id, role, content, vector_embedding) VALUES (?, ?, ?, ?, ?, ?)",
+        (msg_id, session_id, user_id, role, content, embedding_json),
     )
     await db.execute(
         "UPDATE sessions SET updated_at = datetime('now') WHERE id = ?", (session_id,)
@@ -62,10 +59,10 @@ async def save_message(session_id: str, user_id: str, role: str,
 
 
 async def get_round_number(session_id: str) -> int:
-    """获取当前会话的轮次数"""
+    """获取当前会话的消息数（作为轮次）"""
     db = await get_db()
     cursor = await db.execute(
-        "SELECT COALESCE(MAX(round_number), 0) FROM messages WHERE session_id = ?",
+        "SELECT COUNT(*) FROM messages WHERE session_id = ?",
         (session_id,),
     )
     row = await cursor.fetchone()
@@ -73,25 +70,24 @@ async def get_round_number(session_id: str) -> int:
 
 
 async def get_short_term_memory(session_id: str) -> list[dict]:
-    """获取最近 10 轮短期记忆"""
+    """获取最近 10 条短期记忆"""
     db = await get_db()
     cursor = await db.execute(
-        """SELECT role, content FROM (
-               SELECT role, content FROM messages
-               WHERE session_id = ? AND role IN ('user', 'assistant')
-               ORDER BY round_number DESC
-           ) ORDER BY round_number ASC""",
-        (session_id,),
+        """SELECT role, content FROM messages
+           WHERE session_id = ? AND role IN ('user', 'assistant')
+           ORDER BY rowid DESC LIMIT ?""",
+        (session_id, MAX_SHORT_TERM_ROUNDS * 2),
     )
     rows = await cursor.fetchall()
-    return [{"role": row["role"], "content": row["content"]} for row in rows]
+    result = [{"role": row["role"], "content": row["content"]} for row in rows]
+    result.reverse()
+    return result
 
 
 async def check_and_trigger_ltm(session_id: str, query: str,
-                                llm: BaseLLM, round_number: int) -> list[str]:
+                                round_number: int) -> list[str]:
     """检查并触发 M02 长期记忆检索"""
     db = await get_db()
-
     cursor = await db.execute(
         "SELECT trigger_count FROM sessions WHERE id = ?", (session_id,)
     )
@@ -109,9 +105,7 @@ async def check_and_trigger_ltm(session_id: str, query: str,
 
     logger.info(f"M02 触发: session={session_id}, round={round_number}")
 
-    # 向量检索
-    query_vec = await llm.generate_embedding(query)
-
+    query_vec = await embed_query(query)
     cursor = await db.execute(
         "SELECT content, vector_embedding FROM messages WHERE session_id = ? AND role = 'user'",
         (session_id,),
@@ -121,7 +115,6 @@ async def check_and_trigger_ltm(session_id: str, query: str,
     if not rows:
         return []
 
-    # 余弦相似度计算
     scored = []
     for r in rows:
         if not r["vector_embedding"]:
@@ -133,7 +126,6 @@ async def check_and_trigger_ltm(session_id: str, query: str,
     scored.sort(key=lambda x: x[1], reverse=True)
     top_memories = [s[0] for s in scored[:3]]
 
-    # 更新触发计数
     await db.execute(
         "UPDATE sessions SET trigger_count = trigger_count + 1 WHERE id = ?",
         (session_id,),
@@ -164,8 +156,8 @@ async def process_chat(user_id: str, request_data: dict, llm: BaseLLM) -> dict:
     # 2. 计算轮次
     round_number = await get_round_number(session_id) + 1
 
-    # 3. 保存用户消息（先不存向量，等 Embedding 可用时补存）
-    await save_message(session_id, user_id, "user", message, round_number)
+    # 3. 保存用户消息
+    await save_message(session_id, user_id, "user", message)
 
     # 4. M01 - 短期记忆
     short_term_memory = await get_short_term_memory(session_id)
@@ -173,9 +165,9 @@ async def process_chat(user_id: str, request_data: dict, llm: BaseLLM) -> dict:
     # 5. M02 - 长期记忆触发检索
     long_term_memory = []
     try:
-        long_term_memory = await check_and_trigger_ltm(session_id, message, llm, round_number)
+        long_term_memory = await check_and_trigger_ltm(session_id, message, round_number)
     except Exception as e:
-        logger.warning(f"M02 检索跳过（Embedding 可能未就绪）: {e}")
+        logger.warning(f"M02 检索跳过: {e}")
 
     # 6. RAG / 联网搜索
     context_chunks = []
@@ -185,12 +177,11 @@ async def process_chat(user_id: str, request_data: dict, llm: BaseLLM) -> dict:
 
     if search_mode in ("knowledge_base", "hybrid"):
         try:
-            query_vec = await llm.generate_embedding(message)
+            query_vec = await embed_query(message)
             chroma_result = query_documents("knowledge_base", query_vec, top_k=5)
             docs = chroma_result.get("documents", [[]])[0]
             context_chunks = docs
             sources = format_sources(chroma_result)
-
             if search_mode == "hybrid" and not docs:
                 search_mode = "web_search"
         except Exception as e:
@@ -223,13 +214,12 @@ async def process_chat(user_id: str, request_data: dict, llm: BaseLLM) -> dict:
         llm_response = await llm.chat(prompt_messages)
         answer = llm_response.content
     except Exception:
-        # 降级：返回检索结果
         answer = "模型暂时不可用，以下是与您问题相关的资料：\n\n"
         if context_chunks:
             answer += "\n\n---\n".join(context_chunks[:3])
 
     # 9. 保存助手回复
-    await save_message(session_id, user_id, "assistant", answer, round_number + 0.5)
+    await save_message(session_id, user_id, "assistant", answer)
 
     return {
         "session_id": session_id,
@@ -254,8 +244,6 @@ async def get_sessions(user_id: str, limit: int = 50) -> list[dict]:
 async def get_session_messages(session_id: str, user_id: str,
                                page: int = 1, page_size: int = 20) -> dict:
     db = await get_db()
-
-    # 校验归属
     cursor = await db.execute(
         "SELECT id, title, session_type FROM sessions WHERE id = ? AND user_id = ?",
         (session_id, user_id),
@@ -264,7 +252,6 @@ async def get_session_messages(session_id: str, user_id: str,
     if not session:
         return None
 
-    # 总数
     cursor = await db.execute(
         "SELECT COUNT(*) as total FROM messages WHERE session_id = ?", (session_id,)
     )
@@ -272,9 +259,9 @@ async def get_session_messages(session_id: str, user_id: str,
 
     offset = (page - 1) * page_size
     cursor = await db.execute(
-        """SELECT id, role, content, round_number, created_at
+        """SELECT id, role, content, created_at
            FROM messages WHERE session_id = ?
-           ORDER BY round_number ASC LIMIT ? OFFSET ?""",
+           ORDER BY rowid ASC LIMIT ? OFFSET ?""",
         (session_id, page_size, offset),
     )
     messages = [dict(row) for row in await cursor.fetchall()]
