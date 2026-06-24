@@ -124,7 +124,7 @@ def show_login_page():
                     "密码",
                     type="password",
                     value=prefill_pw,
-                    placeholder="请输入密码（6-12位，含英文、数字）",
+                    placeholder="请输入密码（8-20位，须含字母和数字）",
                 )
                 submitted = st.form_submit_button("登 录", type="primary", use_container_width=True)
                 if submitted:
@@ -147,7 +147,7 @@ def show_login_page():
             with st.form("register_form"):
                 st.caption("创建新账户，注册后跳转至登录")
                 username = st.text_input("用户名", placeholder="1-10位，含英文、数字", key="reg_username")
-                password = st.text_input("密码", type="password", placeholder="6-12位，含英文、数字", key="reg_password")
+                password = st.text_input("密码", type="password", placeholder="8-20位，须含字母和数字", key="reg_password")
                 password2 = st.text_input("确认密码", type="password", placeholder="请再次确认密码", key="reg_password2")
                 submitted = st.form_submit_button("注 册", type="primary", use_container_width=True)
                 if submitted:
@@ -155,10 +155,14 @@ def show_login_page():
                         st.error("请填写所有字段")
                     elif password != password2:
                         st.error("两次密码不一致")
-                    elif len(password) < 6 or len(password) > 12:
-                        st.error("密码需6-12位")
                     elif len(username) < 1 or len(username) > 10:
                         st.error("用户名需1-10位")
+                    elif len(password) < 8 or len(password) > 20:
+                        st.error("密码长度需8-20位")
+                    elif not password.isalnum():
+                        st.error("密码只能包含字母和数字，不能有特殊字符或空格")
+                    elif password.isdigit() or password.isalpha():
+                        st.error("密码须同时包含字母和数字")
                     else:
                         try:
                             api_register(username, password, "")
@@ -215,7 +219,7 @@ def show_change_password_dialog():
     st.markdown("请输入当前密码和新密码")
     with st.form("change_password_form"):
         old_pw = st.text_input("旧密码", type="password", placeholder="请输入当前密码")
-        new_pw = st.text_input("新密码", type="password", placeholder="6-12位，含英文、数字")
+        new_pw = st.text_input("新密码", type="password", placeholder="8-20位，须含字母和数字")
         confirm_pw = st.text_input("确认密码", type="password", placeholder="请再次确认新密码")
         col1, col2 = st.columns(2)
         with col1:
@@ -224,8 +228,12 @@ def show_change_password_dialog():
                     st.error("请填写所有字段")
                 elif new_pw != confirm_pw:
                     st.error("两次密码不一致")
-                elif len(new_pw) < 6:
-                    st.error("新密码至少6位")
+                elif len(new_pw) < 8 or len(new_pw) > 20:
+                    st.error("新密码长度需8-20位")
+                elif not new_pw.isalnum():
+                    st.error("密码只能包含字母和数字，不能有特殊字符或空格")
+                elif new_pw.isdigit() or new_pw.isalpha():
+                    st.error("密码须同时包含字母和数字")
                 else:
                     try:
                         api_change_password(old_pw, new_pw)
