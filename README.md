@@ -1,6 +1,39 @@
 # 双体智能体系统 (Shuangti Agent)
 
-双体软件精英产业学院智能对话系统，基于 Python + FastAPI + LangChain，集成 RAG 知识库、联网搜索与特色职业工具。
+双体软件精英产业学院智能对话系统 — 从 MVP 验证到生产级架构演进的完整工程实践。
+
+> **当前仓库分支 `master` 开源的是 V1.0 MVP 版本。V2.0 重构正在进行中，详见下方架构演进说明。**
+
+---
+
+## ⚠️ 架构演进说明 (Architecture Evolution)
+
+> [!IMPORTANT]
+> **如果你正在阅读这份 README 作为技术评估的一部分，请知悉：**
+
+本仓库当前 `master` 分支开源的 **V1.0 MVP** 版本，是我在项目早期阶段独立完成的业务闭环验证。它已经实现了完整的 RAG 对话、知识库管理、联网搜索与特色工具链路，并已在实际场景中投入使用。
+
+然而，**一个好的工程师不仅能把东西做出来，更能在上线后识别问题并推动架构升级**。V1.0 在生产运行中暴露出了以下核心痛点：
+
+| 痛点 | V1.0 现状 | V2.0 方案 |
+|------|----------|----------|
+| Agent 黑盒死循环 | LangChain `AgentExecutor` 无显式状态控制 | **LangGraph StateGraph** 显式状态机 + 条件边 |
+| 向量检索性能瓶颈 | ChromaDB 嵌入式暴力检索，10万条块 >800ms | **Milvus** 分布式索引 (HNSW/IVF)，目标 <50ms |
+| 服务无状态不可扩展 | 内存级 Session，重启即丢失 | **Redis** 会话持久化 + 分布式锁 |
+| 全链路黑盒不可观测 | 调试靠 `print()` 看日志 | **OpenTelemetry** 统一 Traces / Metrics / Logs |
+| 记忆管理粗糙 | 简单滑动窗口 + 关键词触发 | **Memory Graph** (Working / Episodic / Semantic) |
+
+基于以上分析，我正在 `v2-dev` 分支进行 V2.0 架构重构，技术栈升级为 **LangGraph + Milvus + Redis + OpenTelemetry**。
+
+**👉 面试官请查看 [`docs/v2_architecture.md`](docs/v2_architecture.md)**，其中包含：
+- V1.0 → V2.0 的技术选型对比与决策逻辑
+- LangGraph 状态机替代 AgentExecutor 的核心代码对照
+- 完整的 V2.0 架构设计图与 Trace 链路示例
+- 分阶段迁移计划与 FAQ
+
+> 我相信真正有价值的不是"用了什么技术栈"，而是"为什么在这个阶段选择这个技术栈，以及如何从现状平滑演进到目标架构"——这正是 V2.0 重构要回答的核心问题。
+
+---
 
 ## 功能特性
 
@@ -34,7 +67,7 @@ shuangti-agent/
 │       └── 03_设置.py
 ├── data/                # SQLite / ChromaDB / 上传文档
 ├── scripts/             # 运维脚本
-├── docs/                # 设计文档
+├── docs/                # 设计文档 + V2.0 架构文档
 └── requirements.txt
 ```
 
