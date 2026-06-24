@@ -1,7 +1,7 @@
 """知识库管理 API"""
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Depends
-from app.models.knowledge import DocumentUploadResponse, DocumentListResponse, ReloadResponse
-from app.service.knowledge_service import upload_and_index, list_documents, delete_document, reload_all_documents
+from app.models.knowledge import DocumentUploadResponse, DocumentListResponse, ReloadResponse, UrlIngestRequest, UrlIngestResponse
+from app.service.knowledge_service import upload_and_index, list_documents, delete_document, reload_all_documents, ingest_url
 
 router = APIRouter(prefix="/api/knowledge", tags=["知识库管理"])
 
@@ -40,6 +40,15 @@ async def remove_document(doc_id: str):
 async def reload_documents():
     try:
         result = await reload_all_documents()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/url", response_model=UrlIngestResponse)
+async def ingest_url_endpoint(req: UrlIngestRequest):
+    try:
+        result = await ingest_url(req.url, req.category)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

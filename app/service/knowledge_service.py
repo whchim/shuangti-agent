@@ -5,7 +5,7 @@ from uuid import uuid4
 from loguru import logger
 from app.core.database import get_db
 from app.core.config import settings
-from app.rag.loader import load_document
+from app.rag.loader import load_document, load_url
 from app.rag.splitter import split_document
 from app.rag.store import add_documents, delete_documents, get_or_create_collection
 from app.rag.embeddings import embed_texts
@@ -106,3 +106,40 @@ async def reload_all_documents() -> dict:
 
     await db.commit()
     return {"message": f"已重新向量化 {count} 个文档", "total_documents": count}
+
+
+async def ingest_url(url: str, category: str = "未分类") -> dict:
+    """抓取网页内容并向量化入库"""
+    doc_id = uuid4().hex
+
+    # 抓取网页
+    title, text = await load_url(url)
+    source_name = title or url
+
+    # 分割
+    chunks = split_document(text)
+
+    # 向量化
+    embeddings = await embed_texts(chunks)
+
+    # 存入 ChromaDB
+    chunk_ids = [f"{doc_id}_{i}" for i in range(len(chunks))]
+    metadatas = [{"filename": source_name, "category": category, "doc_id": doc_id, "source_url": url} for _ in chunks]
+    add_documents("knowledge_base", chunk_ids, chunks, embeddings, metadatas)
+
+    # 记录到 SQLite
+    db = await get_db()
+    await db.execute(
+        "INSERT INTO knowledge_documents (id, filename, category, chunk_count, status) VALUES (?, ?, ?, ?, 'completed')",
+        (doc_id, source_name, category, len(chunks)),
+    )
+    await db.commit()
+
+    logger.info(f"URL 入库完成: {url}, 标题: {source_name}, {len(chunks)} chunks")
+    return {
+        "id": doc_id,
+        "url": url,
+        "title": source_name,
+        "category": category,
+        "chunk_count": len(chunks),
+    }

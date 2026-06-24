@@ -6,7 +6,7 @@ from api_client import (
     api_list_sessions, api_create_session,
     api_get_session_messages, api_delete_session,
     api_upload_document, api_list_documents,
-    api_delete_document, api_reload_documents,
+    api_delete_document, api_reload_documents, api_ingest_url,
     api_get_career_questions, api_career_assessment,
     api_resume_optimize, api_job_match,
     api_start_interview, api_answer_interview, api_interview_report,
@@ -628,7 +628,7 @@ elif nav == "settings":
 # ═══════════════════ 知识库 ═══════════════════
 elif nav == "knowledge":
     st.markdown('<p class="stGradientTitle" style="font-size:1.8rem">📚 知识库管理</p>', unsafe_allow_html=True)
-    st.caption("上传文档构建内部知识库，支持 PDF、TXT、Markdown 格式，单文件 ≤ 10MB")
+    st.caption("上传文档或抓取网页构建内部知识库，支持 PDF、TXT、Markdown、网页链接")
 
     # --- 文档统计 ---
     try:
@@ -647,7 +647,7 @@ elif nav == "knowledge":
     st.markdown("---")
 
     # --- 上传区 ---
-    tab1, tab2 = st.tabs(["📤 文件上传", "📝 文本粘贴"])
+    tab1, tab2, tab3 = st.tabs(["📤 文件上传", "📝 文本粘贴", "🌐 网页链接"])
     with tab1:
         col1, col2 = st.columns([3, 1])
         with col1:
@@ -678,6 +678,21 @@ elif nav == "knowledge":
                         try:
                             api_upload_document(txt.encode("utf-8"), f"{nm}.txt", pcat)
                             st.toast("入库成功！", icon="✅")
+                            st.rerun()
+                        except Exception as e:
+                            st.error(str(e))
+    with tab3:
+        with st.form("url_form"):
+            url_input = st.text_input("网页链接", placeholder="https://www.example.com")
+            ucat = st.selectbox("分类", ["未分类", "规章制度", "课程信息", "FAQ", "通知公告"], key="ucat")
+            if st.form_submit_button("🌐 抓取入库", type="primary", use_container_width=True):
+                if not url_input.strip():
+                    st.error("请输入网页链接")
+                else:
+                    with st.spinner("正在抓取网页并向量化..."):
+                        try:
+                            result = api_ingest_url(url_input.strip(), ucat)
+                            st.toast(f"入库成功！{result.get('chunk_count', 0)} 个 chunk", icon="✅")
                             st.rerun()
                         except Exception as e:
                             st.error(str(e))

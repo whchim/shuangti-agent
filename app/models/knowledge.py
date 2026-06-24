@@ -28,3 +28,16 @@ class ReloadResponse(BaseModel):
     message: str
     status: str
     total_documents: int
+
+
+class UrlIngestRequest(BaseModel):
+    url: str
+    category: str = "未分类"
+
+
+class UrlIngestResponse(BaseModel):
+    id: str
+    url: str
+    title: str
+    category: str
+    chunk_count: int

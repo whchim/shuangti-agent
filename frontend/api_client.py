@@ -156,6 +156,13 @@ def api_reload_documents() -> dict:
     return handle_response(resp)
 
 
+def api_ingest_url(url: str, category: str = "未分类") -> dict:
+    resp = requests.post(f"{get_api_base()}/api/knowledge/url", json={
+        "url": url, "category": category,
+    }, headers=get_headers())
+    return handle_response(resp)
+
+
 # ===================== Search =====================
 
 def api_search_query(query: str, engine: str = None) -> dict:

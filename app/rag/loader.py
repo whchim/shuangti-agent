@@ -1,4 +1,4 @@
-"""文档加载器：支持 PDF、TXT、Markdown"""
+"""文档加载器：支持 PDF、TXT、Markdown、URL 网页"""
 import os
 from pathlib import Path
 from loguru import logger
@@ -13,6 +13,40 @@ async def load_document(file_path: str) -> str:
         return await load_text(file_path)
     else:
         raise ValueError(f"不支持的文件格式: {ext}")
+
+
+async def load_url(url: str) -> tuple[str, str]:
+    """从 URL 抓取网页文本，返回 (标题, 正文)"""
+    import httpx
+    from bs4 import BeautifulSoup
+
+    async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
+        resp = await client.get(url, headers={
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        })
+        resp.raise_for_status()
+
+    soup = BeautifulSoup(resp.text, "lxml")
+
+    # 提取标题
+    title = ""
+    if soup.title and soup.title.string:
+        title = soup.title.string.strip()
+
+    # 移除无用标签
+    for tag in soup(["script", "style", "nav", "footer", "header", "noscript"]):
+        tag.decompose()
+
+    # 提取正文
+    body = soup.find("body")
+    text = body.get_text(separator="\n") if body else soup.get_text(separator="\n")
+
+    # 清理空白
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    cleaned = "\n".join(lines)
+
+    logger.info(f"URL 抓取完成: {url}, 标题: {title}, 正文 {len(cleaned)} 字符")
+    return title, cleaned
 
 
 async def load_pdf(file_path: str) -> str:

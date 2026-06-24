@@ -97,6 +97,7 @@ streamlit run frontend/app.py --server.address 0.0.0.0
 | Embedding | 智谱 embedding-2 / DeepSeek |
 | 向量数据库 | ChromaDB |
 | 关系数据库 | SQLite (aiosqlite) |
+| RAG 框架 | LangChain（文本分割） |
 | 检索 | 向量检索 + BM25 + RRF 融合 |
 | 搜索 | Tavily / Bing |
 
