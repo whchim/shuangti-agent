@@ -208,6 +208,13 @@ div[data-testid="stSidebar"] .stButton > button[kind="primary"] {
 """, unsafe_allow_html=True)
 
 # ==================== Session State ====================
+# 初始化所有 session_state 键值，防止首次渲染时报 KeyError
+# 每个键控制一个独立的前端功能模块:
+#   nav:          当前页面路由标识
+#   sessions:     侧边栏会话列表缓存
+#   messages:     当前会话的消息列表 (前端内存)
+#   holland_*:    霍兰德测评的状态管理
+#   interview_*:  面试模拟的状态机变量
 INIT_STATE = {
     "api_base": "http://localhost:8000",
     "nav": "chat",
@@ -229,6 +236,12 @@ require_auth()
 # ==================== 辅助函数 ====================
 
 def load_sessions():
+    """从后端 API 拉取当前用户的所有会话列表并写入 session_state。
+
+    调用时机：
+      - 进入 Sidebar 首次渲染时（sessions_loaded == False）
+      - 创建/删除/切换会话后手动刷新
+    """
     try:
         result = api_list_sessions()
         st.session_state.sessions = result if isinstance(result, list) else result.get("sessions", [])
@@ -238,6 +251,14 @@ def load_sessions():
         st.session_state.sessions_loaded = True
 
 def load_messages(session_id: str):
+    """从后端加载指定会话的历史消息，并标准化为前端渲染格式。
+
+    Args:
+        session_id: 目标会话 ID
+
+    会将 API 返回的消息列表转换为统一的 {"role", "content", "id"} 结构，
+    同时更新 chat_count 计数器用于统计面板展示。
+    """
     try:
         result = api_get_session_messages(session_id)
         msgs = result.get("messages", [])
@@ -250,6 +271,19 @@ def load_messages(session_id: str):
         st.session_state.messages = []
 
 def _format_answer(result: dict) -> str:
+    """将后端 Chat API 返回的结果格式化为前端展示的 Markdown 字符串。
+
+    拼接逻辑：
+      - answer 正文作为主内容
+      - sources 字段拼为「📖 参考来源」列表（知识库检索到的文档片段）
+      - web_sources 字段拼为「🌐 网络来源」列表（联网搜索到的网页链接）
+
+    Args:
+        result: API 返回的原始响应字典
+
+    Returns:
+        格式化后的 Markdown 文本
+    """
     answer = result.get("answer", "")
     sources = result.get("sources", [])
     web_sources = result.get("web_sources", [])
@@ -264,6 +298,17 @@ def _format_answer(result: dict) -> str:
     return answer
 
 def _handle_chat_result(result: dict) -> str:
+    """处理 Chat API 响应 — 提取 session_id 并格式化答案。
+
+    当后端为消息自动创建了 session_id 时，同步更新前端的 current_session_id，
+    并刷新侧边栏会话列表。
+
+    Args:
+        result: API 返回的原始响应字典
+
+    Returns:
+        格式化后的 Markdown 答案文本
+    """
     sid = result.get("session_id")
     if sid and not st.session_state.current_session_id:
         st.session_state.current_session_id = sid
@@ -271,6 +316,16 @@ def _handle_chat_result(result: dict) -> str:
     return _format_answer(result)
 
 def delete_message_from_state(idx: int):
+    """从 session_state 中删除指定索引的消息，并级联删除关联的配对消息。
+
+    删除规则：
+      - 删除 user 消息时，若其后紧接 assistant 消息，则一并删除（成对删除）
+      - 删除 assistant 消息时，若其前紧接 user 消息，则一并删除
+      - 边界情况（首/末条）只删除自身
+
+    Args:
+        idx: 要删除的消息在 messages 列表中的索引
+    """
     msgs = st.session_state.messages
     if idx < len(msgs):
         role = msgs[idx]["role"]
@@ -283,18 +338,35 @@ def delete_message_from_state(idx: int):
         st.session_state.chat_count = len(msgs)
 
 def _render_badge(status: bool, label_true: str = "已配置", label_false: str = "未配置"):
+    """渲染一个带状态颜色的 CSS Badge 标签。
+
+    用于显示配置状态（如 API Key 是否已配置）、模型可用性等二元指标。
+
+    Args:
+        status: True 显示绿色「成功」样式，False 显示红色「危险」样式
+        label_true: status=True 时的显示文本
+        label_false: status=False 时的显示文本
+    """
     cls = "stBadge stBadge-success" if status else "stBadge stBadge-danger"
     text = label_true if status else label_false
     st.markdown(f'<span class="{cls}">{text}</span>', unsafe_allow_html=True)
 
 def _render_tag(text: str, color: str = "blue"):
+    """渲染一个 CSS 样式的小标签（Tag/Pill）。
+
+    用于展示技能标签、分类标记、职业推荐等短文本标签。
+
+    Args:
+        text: 标签文本
+        color: 颜色主题，可选 "green" / "red" / "blue" / "purple"
+    """
     st.markdown(f'<span class="stTag stTag-{color}">{text}</span>', unsafe_allow_html=True)
 
 
 # ==================== 侧边栏（Kimi 风格）====================
 with st.sidebar:
     # ---- 顶部：吉祥物 + 品牌标题 ----
-    mascot_path = r"C:\Users\Administrator\OneDrive\Desktop\双体系统\双体形象.jpg"
+    mascot_path = "双体形象.jpg"
     col_img, col_title = st.columns([1, 3])
     with col_img:
         st.image(mascot_path, width=48)
@@ -360,6 +432,8 @@ with st.sidebar:
 nav = st.session_state.nav
 
 # ═══════════════════ 智能对话 ═══════════════════
+# 核心功能页面 — 处理消息发送/接收/编辑/删除的完整生命周期
+# 支持两种模式: SSE 流式输出 与 同步请求（流式失败时自动回退）
 if nav == "chat":
     # --- 统计指标卡 ---
     s_count = len(st.session_state.sessions)
@@ -469,6 +543,8 @@ if nav == "chat":
         with st.chat_message("assistant"):
             full_answer = ""
             use_stream = st.session_state.get("use_stream", True)
+
+            # ── 主路径: SSE 流式输出 ──
             if use_stream:
                 placeholder = st.empty()
                 try:
@@ -497,6 +573,7 @@ if nav == "chat":
                     if not full_answer:
                         placeholder.markdown("(回复为空)")
                 except Exception:
+                    # ── 降级兜底: 流式失败时自动回退到同步请求 ──
                     if not full_answer:
                         try:
                             with st.spinner("思考中..."):
@@ -513,6 +590,7 @@ if nav == "chat":
                             st.session_state.messages = st.session_state.messages[:-1]
                             st.stop()
             else:
+                # ── 备选路径: 用户关闭了流式开关，直接同步请求 ──
                 with st.spinner("思考中..."):
                     try:
                         result = api_send_message(
@@ -528,6 +606,7 @@ if nav == "chat":
                         st.session_state.messages = st.session_state.messages[:-1]
                         st.stop()
 
+            # ── 将最终答案持久化到 session_state, 并确保侧边栏同步 ──
             if full_answer:
                 st.session_state.messages.append({"role": "assistant", "content": full_answer, "id": ""})
                 if not st.session_state.current_session_id:
@@ -626,6 +705,8 @@ elif nav == "settings":
 
 
 # ═══════════════════ 知识库 ═══════════════════
+# 支持三种入库方式: 文件上传 (PDF/TXT/MD)、文本粘贴、网页抓取
+# 文档列表以卡片形式展示，支持删除和重建索引
 elif nav == "knowledge":
     st.markdown('<p class="stGradientTitle" style="font-size:1.8rem">📚 知识库管理</p>', unsafe_allow_html=True)
     st.caption("上传文档或抓取网页构建内部知识库，支持 PDF、TXT、Markdown、网页链接")
@@ -789,6 +870,8 @@ elif nav == "web_search":
 
 
 # ═══════════════════ 职业测评 ═══════════════════
+# 三阶段流程: 加载题目 → 逐题作答 → 提交测评 + 展示结果
+# 答题进度用 st.progress 可视化，各题答案存储在 session_state[hq_{id}] 中
 elif nav == "career":
     st.markdown('<p class="stGradientTitle" style="font-size:1.8rem">🎯 霍兰德职业兴趣测评</p>', unsafe_allow_html=True)
     st.caption("基于 RIASEC 模型的 24 题职业兴趣评估")
@@ -957,6 +1040,10 @@ elif nav == "tools_job":
 
 
 # ═══════════════════ 面试模拟 ═══════════════════
+# 状态机流程:
+#   interview_session=None → 岗位输入 + 开始面试
+#   interview_session 存在 + interview_done=False → 逐题作答
+#   interview_done=True → 展示综合评估报告
 elif nav == "tools_interview":
     st.markdown('<p class="stGradientTitle" style="font-size:1.8rem">🎤 面试模拟</p>', unsafe_allow_html=True)
     st.caption("AI 面试官模拟真实面试场景，逐题回答并获取专业反馈")
