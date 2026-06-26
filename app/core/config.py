@@ -17,7 +17,6 @@ class Settings(BaseSettings):
 
     # 搜索
     tavily_api_key: str = ""
-    bing_search_api_key: str = ""
     default_search_engine: str = "tavily"
 
     # JWT

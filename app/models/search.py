@@ -24,10 +24,8 @@ class SearchConfig(BaseModel):
     default_engine: str
     engines: list[str]
     tavily_available: bool
-    bing_available: bool
 
 
 class SearchConfigUpdate(BaseModel):
     default_search_engine: Optional[str] = None
     tavily_api_key: Optional[str] = None
-    bing_search_api_key: Optional[str] = None

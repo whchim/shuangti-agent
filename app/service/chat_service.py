@@ -11,7 +11,6 @@ from app.rag.store import query_documents
 from app.rag.chain import build_prompt, format_sources
 from app.rag.embeddings import embed_query
 from app.search.tavily_search import tavily_search
-from app.search.bing_search import bing_search
 
 MAX_SHORT_TERM_ROUNDS = 10
 LTM_TRIGGER_START = 12
@@ -190,10 +189,7 @@ async def process_chat(user_id: str, request_data: dict, llm: BaseLLM) -> dict:
     if search_mode == "web_search":
         try:
             engine = request_data.get("search_engine", "tavily")
-            if engine == "bing":
-                web_items = await bing_search(message)
-            else:
-                web_items = await tavily_search(message)
+            web_items = await tavily_search(message)
             web_results = [f"[{w['title']}]({w['url']})\n{w['snippet']}" for w in web_items]
             web_sources = [{"title": w["title"], "url": w["url"], "snippet": w["snippet"]} for w in web_items]
         except Exception as e:

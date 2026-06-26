@@ -83,13 +83,8 @@ async def send_message_stream(req: ChatSendRequest, user: dict = Depends(get_cur
 
             if search_mode == "web_search":
                 try:
-                    engine = req.model_dump().get("search_engine", "tavily")
-                    if engine == "bing":
-                        from app.search.bing_search import bing_search
-                        web_items = await bing_search(message)
-                    else:
-                        from app.search.tavily_search import tavily_search
-                        web_items = await tavily_search(message)
+                    from app.search.tavily_search import tavily_search
+                    web_items = await tavily_search(message)
                     web_results = [f"[{w['title']}]({w['url']})\n{w['snippet']}" for w in web_items]
                 except Exception:
                     pass

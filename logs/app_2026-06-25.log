@@ -1,0 +1,57 @@
+2026-06-25 13:55:53.729 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-25 13:55:53.751 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-25 13:55:53.754 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-25 13:55:53.754 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-25 14:05:43.096 | INFO     | app.core.database:close_db:147 - 数据库连接已关闭
+2026-06-25 14:05:43.096 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-25 14:05:47.838 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-25 14:05:47.843 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-25 14:05:47.846 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-25 14:05:47.847 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-25 14:06:07.423 | INFO     | app.core.database:close_db:147 - 数据库连接已关闭
+2026-06-25 14:06:07.424 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-25 14:06:10.905 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-25 14:06:10.911 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-25 14:06:10.913 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-25 14:06:10.913 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-25 14:07:25.021 | INFO     | app.core.database:close_db:147 - 数据库连接已关闭
+2026-06-25 14:07:25.021 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-25 14:07:28.617 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-25 14:07:28.621 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-25 14:07:28.622 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-25 14:07:28.623 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-25 14:09:19.996 | INFO     | app.core.database:close_db:147 - 数据库连接已关闭
+2026-06-25 14:09:19.997 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-25 14:09:23.084 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-25 14:09:23.100 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-25 14:09:23.102 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-25 14:09:23.103 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-25 14:09:49.172 | INFO     | app.core.database:close_db:147 - 数据库连接已关闭
+2026-06-25 14:09:49.172 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-25 14:09:52.415 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-25 14:09:52.436 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-25 14:09:52.438 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-25 14:09:52.438 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-25 14:22:05.613 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-25 14:24:29.778 | INFO     | app.search.tavily_search:tavily_search:32 - Tavily 搜索: 有氧运动和无氧运动分别适合什么人？ → 5 条结果
+2026-06-25 14:25:28.522 | INFO     | app.search.tavily_search:tavily_search:32 - Tavily 搜索: 双体出名吗？ → 5 条结果
+2026-06-25 14:38:35.235 | INFO     | app.search.tavily_search:tavily_search:32 - Tavily 搜索: 给我推荐一些软件测试学习视频 → 5 条结果
+2026-06-25 14:46:35.086 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=5f56d8bd5cf249e78a6e5ac81caeb04e, round=13
+2026-06-25 14:46:37.946 | INFO     | app.search.tavily_search:tavily_search:32 - Tavily 搜索: 重庆移通学院合川校区的双体学院有几个部门？ → 5 条结果
+2026-06-25 14:47:22.713 | INFO     | app.search.tavily_search:tavily_search:32 - Tavily 搜索: 错了 → 5 条结果
+2026-06-25 15:04:06.194 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=58cc99a054524be08dee98e9826b50e4, round=13
+2026-06-25 15:04:31.831 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=58cc99a054524be08dee98e9826b50e4, round=17
+2026-06-25 15:05:17.548 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=58cc99a054524be08dee98e9826b50e4, round=23
+2026-06-25 15:05:45.170 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=58cc99a054524be08dee98e9826b50e4, round=27
+2026-06-25 15:06:23.942 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=58cc99a054524be08dee98e9826b50e4, round=33
+2026-06-25 15:07:37.154 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=5f56d8bd5cf249e78a6e5ac81caeb04e, round=17
+2026-06-25 15:10:48.102 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=58cc99a054524be08dee98e9826b50e4, round=37
+2026-06-25 15:13:57.626 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=58cc99a054524be08dee98e9826b50e4, round=43
+2026-06-25 15:14:28.982 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=58cc99a054524be08dee98e9826b50e4, round=47
+2026-06-25 15:15:03.217 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=58cc99a054524be08dee98e9826b50e4, round=53
+2026-06-25 15:15:46.752 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=58cc99a054524be08dee98e9826b50e4, round=57
+2026-06-25 15:41:59.616 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=58cc99a054524be08dee98e9826b50e4, round=63
+2026-06-25 15:43:02.143 | INFO     | app.search.tavily_search:tavily_search:32 - Tavily 搜索: 你是什么助手？ → 5 条结果
+2026-06-25 15:43:23.169 | INFO     | app.search.tavily_search:tavily_search:32 - Tavily 搜索: 你会讲故事吗？ → 5 条结果
+2026-06-25 15:43:49.654 | INFO     | app.service.chat_service:check_and_trigger_ltm:106 - M02 触发: session=5f56d8bd5cf249e78a6e5ac81caeb04e, round=23
+2026-06-25 15:43:59.934 | INFO     | app.search.tavily_search:tavily_search:32 - Tavily 搜索: 你给我讲白雪公主的故事吧 → 0 条结果

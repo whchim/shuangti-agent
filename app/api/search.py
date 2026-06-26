@@ -24,6 +24,4 @@ async def update_config(req: SearchConfigUpdate):
         settings.default_search_engine = req.default_search_engine
     if req.tavily_api_key is not None:
         settings.tavily_api_key = req.tavily_api_key
-    if req.bing_search_api_key is not None:
-        settings.bing_search_api_key = req.bing_search_api_key
     return get_search_config()

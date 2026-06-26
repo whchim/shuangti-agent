@@ -1,0 +1,49 @@
+2026-06-24 12:46:28.252 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-24 12:46:28.280 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-24 12:46:28.282 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-24 12:46:28.282 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-24 12:47:50.040 | INFO     | app.core.database:close_db:147 - 数据库连接已关闭
+2026-06-24 12:47:50.041 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-24 12:47:52.906 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-24 12:47:52.912 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-24 12:47:52.914 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-24 12:47:52.914 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-24 12:48:51.809 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-24 12:56:57.799 | INFO     | app.search.tavily_search:tavily_search:32 - Tavily 搜索: http://www.shuangtixi.com/ → 5 条结果
+2026-06-24 13:12:15.191 | INFO     | app.core.database:close_db:147 - 数据库连接已关闭
+2026-06-24 13:12:15.192 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-24 13:12:19.171 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-24 13:12:19.177 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-24 13:12:19.179 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-24 13:12:19.179 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-24 13:31:34.134 | INFO     | app.rag.store:get_chroma_client:14 - ChromaDB 已初始化: data/chroma
+2026-06-24 14:20:42.342 | INFO     | app.core.database:close_db:147 - 数据库连接已关闭
+2026-06-24 14:20:42.342 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-24 14:20:46.354 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-24 14:20:46.359 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-24 14:20:46.361 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-24 14:20:46.361 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-24 14:35:04.275 | INFO     | app.core.database:close_db:147 - 数据库连接已关闭
+2026-06-24 14:35:04.276 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-24 14:35:12.183 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-24 14:35:12.188 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-24 14:35:12.190 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-24 14:35:12.191 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-24 14:38:48.253 | INFO     | app.core.database:close_db:147 - 数据库连接已关闭
+2026-06-24 14:38:48.254 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-24 14:38:52.364 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-24 14:38:52.369 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-24 14:38:52.371 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-24 14:38:52.371 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-24 16:24:39.019 | INFO     | app.core.database:close_db:147 - 数据库连接已关闭
+2026-06-24 16:24:39.020 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-24 16:24:46.170 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-24 16:24:46.174 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-24 16:24:46.176 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-24 16:24:46.176 | INFO     | app.main:lifespan:34 - 数据库初始化完成
+2026-06-24 18:47:08.954 | INFO     | app.core.database:close_db:147 - 数据库连接已关闭
+2026-06-24 18:47:08.955 | INFO     | app.main:lifespan:37 - 应用已关闭
+2026-06-24 21:27:47.107 | INFO     | app.main:lifespan:32 - 正在启动双体智能体系统...
+2026-06-24 21:27:47.155 | INFO     | app.core.database:get_db:21 - 数据库连接已建立: D:\桌面\双体系统\双体系统\data\sqlite\shuangti.db
+2026-06-24 21:27:47.160 | INFO     | app.core.database:init_db:139 - 数据库表初始化完成
+2026-06-24 21:27:47.161 | INFO     | app.main:lifespan:34 - 数据库初始化完成

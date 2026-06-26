@@ -670,23 +670,20 @@ elif nav == "settings":
     with tab2:
         with st.form("search_form"):
             st.markdown("#### 搜索引擎设置")
-            eng = st.selectbox("默认引擎", ["tavily", "bing"],
-                               index=0 if scfg.get("default_engine") != "bing" else 1)
+            eng = st.selectbox("默认引擎", ["tavily"],
+                               index=0)
             tk = st.text_input("Tavily API Key", type="password", placeholder="留空不修改")
-            bk = st.text_input("Bing API Key", type="password", placeholder="留空不修改")
             if st.form_submit_button("💾 保存配置", type="primary", use_container_width=True):
                 try:
                     payload = {"default_search_engine": eng}
                     if tk.strip(): payload["tavily_api_key"] = tk.strip()
-                    if bk.strip(): payload["bing_search_api_key"] = bk.strip()
                     st.session_state.search_config = api_update_search_config(payload)
                     st.success("配置已保存")
                 except Exception as e:
                     st.error(str(e))
         if scfg:
             st.caption(f"引擎: `{scfg.get('default_engine')}`  |  "
-                       f"Tavily: {'✅' if scfg.get('tavily_available') else '❌'}  |  "
-                       f"Bing: {'✅' if scfg.get('bing_available') else '❌'}")
+                       f"Tavily: {'✅' if scfg.get('tavily_available') else '❌'}")
 
     with tab3:
         p = st.session_state.profile
@@ -832,13 +829,13 @@ elif nav == "web_search":
 
     st.markdown('<div class="stSearchHero">', unsafe_allow_html=True)
     st.markdown("### 🔍 实时联网检索")
-    st.caption("通过 Tavily / Bing 搜索引擎获取最新网络信息")
+    st.caption("通过 Tavily 搜索引擎获取最新网络信息")
     with st.form("web_search_form"):
         col1, col2 = st.columns([3, 1])
         with col1:
             query = st.text_input("搜索关键词", placeholder="输入任何你想搜索的内容...", label_visibility="collapsed")
         with col2:
-            engine = st.selectbox("引擎", ["tavily", "bing"], label_visibility="collapsed")
+            engine = st.selectbox("引擎", ["tavily"], label_visibility="collapsed")
         if st.form_submit_button("🔍 开始搜索", type="primary", use_container_width=True):
             if not query.strip():
                 st.error("请输入搜索内容")
