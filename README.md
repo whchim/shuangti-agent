@@ -75,15 +75,15 @@ shuangti-agent/
 
 ### 核心认知架构
 
-<img src="imgs/shuangti-core-architecture-v1.svg" width="100%" alt="核心认知架构">
+<img src="imgs/双体智能体-核心认知框架-v1.0.png" width="100%" alt="核心认知架构">
 
 ### 系统组件与拓扑
 
-<img src="imgs/shuangti-components-topology-v1.svg" width="100%" alt="系统组件与拓扑">
+<img src="imgs/双体智能体-组件与拓扑图-v1.0.png" width="100%" alt="系统组件与拓扑">
 
 ### 时序交互
 
-<img src="imgs/shuangti-sequence-diagram-v1.svg" width="100%" alt="时序交互">
+<img src="imgs/双体智能体-时序交互图-v1.0.png" width="100%" alt="时序交互">
 
 ## 快速开始
 
