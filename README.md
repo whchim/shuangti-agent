@@ -52,7 +52,7 @@ shuangti-agent/
 ├── app/
 │   ├── api/             # FastAPI 路由层
 │   ├── core/            # 配置、数据库、安全、依赖注入
-│   ├── llm/             # LLM 适配层（智谱 / DeepSeek）
+│   ├── llm/             # LLM 适配层（DeepSeek）
 │   ├── models/          # Pydantic 数据模型
 │   ├── rag/             # RAG 管道（加载/分割/向量化/检索/编排）
 │   ├── search/          # 联网搜索（Tavily）
@@ -75,15 +75,15 @@ shuangti-agent/
 
 ### 核心认知架构
 
-![核心认知架构](imgs/双体智能体-核心认知架构图-v1.0.svg)
+![核心认知架构](imgs/shuangti-core-architecture-v1.svg)
 
 ### 系统组件与拓扑
 
-![系统组件与拓扑](imgs/双体智能体-系统组件与拓扑图-v1.0.svg)
+![系统组件与拓扑](imgs/shuangti-components-topology-v1.svg)
 
 ### 时序交互
 
-![时序交互](imgs/双体智能体-时序交互图-v1.0.svg)
+![时序交互](imgs/shuangti-sequence-diagram-v1.svg)
 
 ## 快速开始
 
@@ -102,8 +102,7 @@ cp .env.example .env
 编辑 `.env`，至少填入一个 LLM API Key：
 
 ```env
-ZHIPU_API_KEY=your_key       # 智谱 API Key
-DEEPSEEK_API_KEY=your_key    # DeepSeek API Key（可选）
+DEEPSEEK_API_KEY=your_key    # DeepSeek API Key
 ```
 
 ### 3. 启动后端
@@ -140,8 +139,8 @@ streamlit run frontend/app.py --server.address 0.0.0.0
 |------|------|
 | Web 框架 | FastAPI |
 | 前端 | Streamlit |
-| LLM | 智谱 GLM-4-Flash / DeepSeek |
-| Embedding | 智谱 embedding-2 / DeepSeek |
+| LLM | DeepSeek-v4-Flash |
+| Embedding | 阿里百炼 text-embedding-v4 |
 | 向量数据库 | ChromaDB |
 | 关系数据库 | SQLite (aiosqlite) |
 | RAG 框架 | LangChain（文本分割） |
