@@ -4,7 +4,6 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # LLM
-    zhipu_api_key: str = ""
     deepseek_api_key: str = ""
     deepseek_base_url: str = "https://api.deepseek.com/v1"
 
@@ -13,7 +12,7 @@ class Settings(BaseSettings):
     bailian_embedding_model: str = "text-embedding-v4"
 
     # 默认模型
-    default_llm_model: str = "zhipu"
+    default_llm_model: str = "deepseek"
 
     # 搜索
     tavily_api_key: str = ""

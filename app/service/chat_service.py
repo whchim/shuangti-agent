@@ -15,7 +15,17 @@ from app.search.tavily_search import tavily_search
 MAX_SHORT_TERM_ROUNDS = 10
 LTM_TRIGGER_START = 12
 LTM_TRIGGER_INTERVAL = 5
-HYBRID_SIMILARITY_THRESHOLD = 0.7
+RAG_SIMILARITY_THRESHOLD = 0.35  # ChromaDB 余弦距离阈值（越低越相关）
+WEB_SEARCH_DOMAIN_PREFIX = "双体软件精英产业学院"
+
+# 领域拒答兜底文案
+DOMAIN_REFUSAL_ANSWER = (
+    "我是双体软件精英产业学院的专属助手，当前知识库中暂时没有与您问题相关的信息。\n\n"
+    "您可以尝试：\n"
+    "- 换一种方式描述您的问题\n"
+    "- 询问关于双体学院的招生、教学、课程等话题\n"
+    "- 使用特色工具（霍兰德测评、简历优化、岗位匹配、面试模拟）"
+)
 
 
 async def get_or_create_session(user_id: str, session_id: Optional[str],
@@ -168,7 +178,7 @@ async def process_chat(user_id: str, request_data: dict, llm: BaseLLM) -> dict:
     except Exception as e:
         logger.warning(f"M02 检索跳过: {e}")
 
-    # 6. RAG / 联网搜索
+    # 6. RAG / 联网搜索（带相似度阈值 + 领域约束）
     context_chunks = []
     web_results = []
     sources = []
@@ -179,21 +189,48 @@ async def process_chat(user_id: str, request_data: dict, llm: BaseLLM) -> dict:
             query_vec = await embed_query(message)
             chroma_result = query_documents("knowledge_base", query_vec, top_k=5)
             docs = chroma_result.get("documents", [[]])[0]
-            context_chunks = docs
+            distances = chroma_result.get("distances", [[]])[0] if "distances" in chroma_result else []
+
+            # 相似度阈值过滤：仅保留距离 < RAG_SIMILARITY_THRESHOLD 的文档
+            if distances and docs:
+                filtered_docs = [
+                    docs[i] for i in range(len(docs))
+                    if i < len(distances) and distances[i] < RAG_SIMILARITY_THRESHOLD
+                ]
+                if not filtered_docs and search_mode == "hybrid":
+                    # 知识库无高质量匹配，触发联网降级
+                    logger.info("知识库检索无高相关结果，降级为联网搜索")
+                    search_mode = "web_search"
+                else:
+                    context_chunks = filtered_docs or docs
+            else:
+                context_chunks = docs
+
             sources = format_sources(chroma_result)
-            if search_mode == "hybrid" and not docs:
-                search_mode = "web_search"
         except Exception as e:
             logger.warning(f"知识库检索失败: {e}")
 
     if search_mode == "web_search":
         try:
-            engine = request_data.get("search_engine", "tavily")
-            web_items = await tavily_search(message)
+            # 联网搜索添加领域前缀，约束搜索范围
+            search_query = f"{WEB_SEARCH_DOMAIN_PREFIX} {message}"
+            web_items = await tavily_search(search_query)
             web_results = [f"[{w['title']}]({w['url']})\n{w['snippet']}" for w in web_items]
             web_sources = [{"title": w["title"], "url": w["url"], "snippet": w["snippet"]} for w in web_items]
         except Exception as e:
             logger.warning(f"联网搜索失败: {e}")
+
+    # 6b. 领域拒答策略：知识库 + 搜索均无结果时，直接兜底拒答
+    if not context_chunks and not web_results:
+        from datetime import datetime
+        await save_message(session_id, user_id, "assistant", DOMAIN_REFUSAL_ANSWER)
+        return {
+            "session_id": session_id,
+            "answer": DOMAIN_REFUSAL_ANSWER,
+            "sources": [],
+            "web_sources": [],
+            "created_at": datetime.utcnow().isoformat(),
+        }
 
     # 7. Prompt 组装
     prompt_messages = build_prompt(

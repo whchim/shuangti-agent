@@ -3,28 +3,22 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from fastapi.responses import StreamingResponse
 from app.models.chat import ChatSendRequest, ChatSendResponse, SessionItem, SessionDetail
 from app.core.dependencies import get_current_user
-from app.core.config import settings
 from app.service.chat_service import process_chat, get_sessions, get_session_messages, delete_session
 from app.llm.base import BaseLLM
+from app.llm.deepseek import DeepSeekAdapter
 
 router = APIRouter(prefix="/api/chat", tags=["对话"])
 
 
-def get_llm(model: str = None) -> BaseLLM:
-    """根据请求参数或默认配置动态选择 LLM 适配器"""
-    model = model or settings.default_llm_model
-    if model == "deepseek":
-        from app.llm.deepseek import DeepSeekAdapter
-        return DeepSeekAdapter()
-    else:
-        from app.llm.zhipu import ZhipuAdapter
-        return ZhipuAdapter()
+def get_llm() -> BaseLLM:
+    """获取 DeepSeek LLM 适配器"""
+    return DeepSeekAdapter()
 
 
 @router.post("/send")
 async def send_message(req: ChatSendRequest, user: dict = Depends(get_current_user)):
     try:
-        llm = get_llm(req.model)
+        llm = get_llm()
         result = await process_chat(user["user_id"], req.model_dump(), llm)
         return result
     except Exception as e:
@@ -36,7 +30,7 @@ async def send_message_stream(req: ChatSendRequest, user: dict = Depends(get_cur
     """SSE 流式对话接口"""
     async def event_stream():
         try:
-            llm = get_llm(req.model)
+            llm = get_llm()
             # 导入 process_chat 中用到的函数
             from app.service.chat_service import (
                 get_or_create_session, get_round_number,
@@ -69,25 +63,47 @@ async def send_message_stream(req: ChatSendRequest, user: dict = Depends(get_cur
             except Exception:
                 pass
 
-            # 5. RAG / 搜索
+            # 5. RAG / 搜索（带相似度阈值 + 领域约束）
             context_chunks = []
             web_results = []
+            from app.service.chat_service import RAG_SIMILARITY_THRESHOLD, WEB_SEARCH_DOMAIN_PREFIX, DOMAIN_REFUSAL_ANSWER
+
             if search_mode in ("knowledge_base", "hybrid"):
                 try:
                     query_vec = await embed_query(message)
                     chroma_result = query_documents("knowledge_base", query_vec, top_k=5)
                     docs = chroma_result.get("documents", [[]])[0]
-                    context_chunks = docs
+                    distances = chroma_result.get("distances", [[]])[0] if "distances" in chroma_result else []
+
+                    if distances and docs:
+                        filtered_docs = [
+                            docs[i] for i in range(len(docs))
+                            if i < len(distances) and distances[i] < RAG_SIMILARITY_THRESHOLD
+                        ]
+                        if not filtered_docs and search_mode == "hybrid":
+                            search_mode = "web_search"
+                        else:
+                            context_chunks = filtered_docs or docs
+                    else:
+                        context_chunks = docs
                 except Exception:
                     pass
 
             if search_mode == "web_search":
                 try:
                     from app.search.tavily_search import tavily_search
-                    web_items = await tavily_search(message)
+                    search_query = f"{WEB_SEARCH_DOMAIN_PREFIX} {message}"
+                    web_items = await tavily_search(search_query)
                     web_results = [f"[{w['title']}]({w['url']})\n{w['snippet']}" for w in web_items]
                 except Exception:
                     pass
+
+            # 5b. 领域拒答策略：无结果时直接返回兜底
+            if not context_chunks and not web_results:
+                await save_message(session_id, user["user_id"], "assistant", DOMAIN_REFUSAL_ANSWER)
+                yield f"data: {__import__('json').dumps({'type': 'chunk', 'content': DOMAIN_REFUSAL_ANSWER})}\n\n"
+                yield f"data: {__import__('json').dumps({'type': 'done', 'content': DOMAIN_REFUSAL_ANSWER})}\n\n"
+                return
 
             # 6. Prompt 组装
             prompt_messages = build_prompt(

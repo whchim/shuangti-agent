@@ -31,9 +31,9 @@ def handle_response(resp: requests.Response):
 
 # ===================== Auth =====================
 
-def api_register(username: str, password: str, email: str) -> dict:
+def api_register(username: str, password: str) -> dict:
     resp = requests.post(f"{get_api_base()}/api/auth/register", json={
-        "username": username, "password": password, "email": email,
+        "username": username, "password": password,
     })
     return handle_response(resp)
 
@@ -57,11 +57,10 @@ def api_update_profile(data: dict) -> dict:
 
 # ===================== Chat =====================
 
-def api_send_message(session_id: Optional[str], message: str, model: str,
+def api_send_message(session_id: Optional[str], message: str,
                      search_mode: str, knowledge_base_ids: list[str] = None) -> dict:
     payload = {
         "message": message,
-        "model": model,
         "search_mode": search_mode,
         "knowledge_base_ids": knowledge_base_ids or [],
     }
@@ -72,13 +71,12 @@ def api_send_message(session_id: Optional[str], message: str, model: str,
     return handle_response(resp)
 
 
-def api_send_message_stream(session_id: Optional[str], message: str, model: str,
+def api_send_message_stream(session_id: Optional[str], message: str,
                             search_mode: str, knowledge_base_ids: list[str] = None):
     """SSE 流式请求，返回 (event_type, data) 生成器"""
     import json as _json
     payload = {
         "message": message,
-        "model": model,
         "search_mode": search_mode,
         "knowledge_base_ids": knowledge_base_ids or [],
     }

@@ -19,13 +19,8 @@ router = APIRouter(prefix="/api/tools", tags=["特色工具"])
 
 
 def get_llm():
-    from app.core.config import settings
-    if settings.default_llm_model == "deepseek":
-        from app.llm.deepseek import DeepSeekAdapter
-        return DeepSeekAdapter()
-    else:
-        from app.llm.zhipu import ZhipuAdapter
-        return ZhipuAdapter()
+    from app.llm.deepseek import DeepSeekAdapter
+    return DeepSeekAdapter()
 
 
 # ===== 职业测评 =====

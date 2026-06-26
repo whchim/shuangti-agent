@@ -5,7 +5,7 @@ from app.core.config import settings
 
 
 class DeepSeekAdapter(BaseLLM):
-    """DeepSeek 适配器（兼容 OpenAI API 格式）"""
+    """DeepSeek 适配器（兼容 OpenAI API 格式，使用 deepseek-v4-flash）"""
 
     def __init__(self):
         self.client = OpenAI(
@@ -15,12 +15,12 @@ class DeepSeekAdapter(BaseLLM):
 
     @property
     def model_name(self) -> str:
-        return "deepseek"
+        return "deepseek-v4-flash"
 
     async def chat(self, messages: list[dict], **kwargs) -> LLMResponse:
         response = await asyncio.to_thread(
             self.client.chat.completions.create,
-            model="deepseek-chat",
+            model="deepseek-v4-flash",
             messages=messages,
             temperature=0.7,
             max_tokens=2048,
@@ -36,7 +36,7 @@ class DeepSeekAdapter(BaseLLM):
 
     async def chat_stream(self, messages: list[dict], **kwargs):
         response = self.client.chat.completions.create(
-            model="deepseek-chat",
+            model="deepseek-v4-flash",
             messages=messages,
             temperature=0.7,
             max_tokens=2048,

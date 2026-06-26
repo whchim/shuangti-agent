@@ -24,7 +24,7 @@
 
 - **智能对话**: 基于 RAG 增强的多轮对话，支持 SSE 流式输出
 - **知识库管理**: 上传 PDF/TXT/MD 文档构建内部知识库，支持网页抓取入库
-- **联网搜索**: Tavily / Bing 双引擎实时搜索
+- **联网搜索**: Tavily 实时搜索
 - **对话记忆**: 短期记忆（最近10轮）+ 长期记忆（向量相似度自动触发）
 - **特色工具**: 霍兰德职业测评、简历优化、岗位匹配、面试模拟
 
@@ -43,7 +43,7 @@ shuangti-agent/
 │   ├── service/                # 业务服务层 (核心逻辑所在)
 │   ├── llm/                    # LLM 适配层 (BaseLLM → DeepSeek / Zhipu)
 │   ├── rag/                    # RAG 管道 (loader → splitter → embeddings → store → retriever → chain)
-│   ├── search/                 # 联网搜索 (Tavily / Bing)
+│   ├── search/                 # 联网搜索 (Tavily)
 │   ├── models/                 # Pydantic 请求/响应模型
 │   └── v2_agent/               # [规划中] V2.0 Agent (LangGraph StateGraph)
 ├── frontend/                   # Streamlit 前端
@@ -280,8 +280,8 @@ API 路由层 (app/api/)      ← 薄层, 仅做参数接收和路由转发
 | **前端** | Streamlit | 1.40.0 | 纯 Python Web 界面 |
 | **异步数据库驱动** | aiosqlite | 0.20.0 | SQLite 异步操作 |
 | **向量数据库** | ChromaDB | 0.5.5 | 嵌入向量存储与检索 |
-| **LLM** | DeepSeek / 智谱 GLM-4-Flash | — | 对话生成 |
-| **LLM SDK** | OpenAI SDK / zhipuai | 1.47.0 / 2.0.1 | API 调用 |
+| **LLM** | DeepSeek | — | 对话生成 |
+| **LLM SDK** | OpenAI SDK | 1.47.0 | API 调用 |
 | **Embedding** | 阿里百炼 text-embedding-v4 | 1024维 | 文本向量化 |
 | **Embedding SDK** | dashscope | 1.21.0 | 百炼 API 调用 |
 | **认证** | python-jose + passlib[bcrypt] | 3.3.0 / 1.7.4 | JWT + 密码哈希 |
@@ -379,7 +379,6 @@ pip install -r requirements.txt
 # 4. 配置环境变量
 cp .env.example .env
 # 编辑 .env, 至少填入:
-#   ZHIPU_API_KEY=xxx        (智谱GLM)
 #   DEEPSEEK_API_KEY=xxx     (DeepSeek)
 #   BAILIAN_API_KEY=xxx      (百炼Embedding)
 
@@ -448,6 +447,23 @@ app.include_router(new_feature.router)
 def api_new_feature(param1: str, param2: int = 10) -> dict:
     """调用新功能 API"""
     ...
+```
+
+### 5.7 修改记录规则
+
+**每次代码修改必须在 `docs/record/` 目录下创建修改记录文件。**
+
+- 文件名格式: `YYYY-MM-序号-DD-修改问题简述.md`
+- 序号为两位数字（01, 02, 03...），按修改时间先后递增，置于月份与日期之间
+- 问题简述不超过 **10个字**
+- 文件内容自由描述本次修改的内容、原因和影响范围
+
+示例:
+```
+docs/record/
+  ├── 2026-06-01-26-移除注册邮箱字段.md
+  ├── 2026-06-02-26-修正吉祥物图片路径.md
+  └── 2026-06-03-26-个人中心优化.md
 ```
 
 ---

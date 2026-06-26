@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from loguru import logger
 from app.core.database import init_db
 from app.service.knowledge_service import upload_and_index
-from app.llm.zhipu import ZhipuAdapter
+from app.llm.deepseek import DeepSeekAdapter
 
 
 async def main():
@@ -26,7 +26,7 @@ async def main():
         logger.error(f"目录不存在: {args.path}")
         return
 
-    llm = ZhipuAdapter()
+    llm = DeepSeekAdapter()
 
     for filename in os.listdir(args.path):
         filepath = os.path.join(args.path, filename)

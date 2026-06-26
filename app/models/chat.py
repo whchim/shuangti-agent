@@ -13,7 +13,6 @@ class SearchMode(str, Enum):
 class ChatSendRequest(BaseModel):
     session_id: Optional[str] = None  # 新会话时不传
     message: str = Field(min_length=1, max_length=2000)
-    model: str = "zhipu"
     knowledge_base_ids: list[str] = []
     search_mode: SearchMode = SearchMode.knowledge_base
 

@@ -6,28 +6,38 @@ from app.core.database import get_db
 from app.core.security import hash_password, verify_password, create_access_token
 
 
-async def register_user(username: str, email: str, password: str) -> dict:
-    db = await get_db()
-    email = email or f"{username}@shuangti.ai"
+async def register_user(username: str, password: str) -> dict:
+    """注册新用户（无需邮箱）。
 
-    # 检查唯一性
+    Args:
+        username: 用户名
+        password: 明文密码
+
+    Returns:
+        dict: {"id": ..., "username": ...}
+
+    Raises:
+        ValueError: 用户名已存在
+    """
+    db = await get_db()
+
+    # 检查用户名唯一性
     cursor = await db.execute(
-        "SELECT id FROM users WHERE username = ? OR (email != '' AND email = ?)",
-        (username, email),
+        "SELECT id FROM users WHERE username = ?", (username,),
     )
     if await cursor.fetchone():
-        raise ValueError("用户名或邮箱已存在")
+        raise ValueError("用户名已存在")
 
     user_id = uuid4().hex
     password_hash = hash_password(password)
 
     await db.execute(
         "INSERT INTO users (id, username, email, password_hash) VALUES (?, ?, ?, ?)",
-        (user_id, username, email, password_hash),
+        (user_id, username, "", password_hash),
     )
     await db.commit()
 
-    return {"id": user_id, "username": username, "email": email}
+    return {"id": user_id, "username": username}
 
 
 async def login_user(username: str, password: str) -> dict:
@@ -37,11 +47,11 @@ async def login_user(username: str, password: str) -> dict:
     )
     row = await cursor.fetchone()
     if not row:
-        raise ValueError("用户名或密码错误")
+        raise ValueError("用户不存在")
 
     user = dict(row)
     if not verify_password(password, user["password_hash"]):
-        raise ValueError("用户名或密码错误")
+        raise ValueError("密码错误")
 
     token = create_access_token(user["id"], user["username"])
     return {

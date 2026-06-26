@@ -157,6 +157,8 @@ def show_login_page():
                         st.error("两次密码不一致")
                     elif len(username) < 1 or len(username) > 10:
                         st.error("用户名需1-10位")
+                    elif not username.strip().isalnum():
+                        st.error("用户名只能包含英文字母和数字")
                     elif len(password) < 8 or len(password) > 20:
                         st.error("密码长度需8-20位")
                     elif not password.isalnum():
@@ -165,7 +167,7 @@ def show_login_page():
                         st.error("密码须同时包含字母和数字")
                     else:
                         try:
-                            api_register(username, password, "")
+                            api_register(username, password)
                             # 注册成功：存储账号密码用于自动填充登录栏
                             st.session_state.prefill_username = username
                             st.session_state.prefill_password = password
@@ -280,6 +282,10 @@ def show_change_username_dialog():
                     st.error("请输入新用户名")
                 elif len(new_name) > 10:
                     st.error("用户名不超过10位")
+                elif len(new_name.strip()) < 1:
+                    st.error("用户名不能为空")
+                elif not new_name.strip().isalnum():
+                    st.error("用户名只能包含英文字母和数字")
                 else:
                     try:
                         result = api_update_username(new_name.strip())

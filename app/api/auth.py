@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/auth", tags=["用户认证"])
 @router.post("/register")
 async def register(req: UserRegisterRequest):
     try:
-        user = await register_user(req.username, req.email or "", req.password)
+        user = await register_user(req.username, req.password)
         return user
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -26,7 +26,7 @@ async def login(req: UserLoginRequest):
         result = await login_user(req.username, req.password)
         return result
     except ValueError as e:
-        raise HTTPException(status_code=401, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/logout")

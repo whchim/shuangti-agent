@@ -365,8 +365,12 @@ def _render_tag(text: str, color: str = "blue"):
 
 # ==================== 侧边栏（Kimi 风格）====================
 with st.sidebar:
+    # ---- 首次加载：拉取会话列表 ----
+    if not st.session_state.get("sessions_loaded"):
+        load_sessions()
+
     # ---- 顶部：吉祥物 + 品牌标题 ----
-    mascot_path = "双体形象.jpg"
+    mascot_path = "imgs/双体形象.jpg"
     col_img, col_title = st.columns([1, 3])
     with col_img:
         st.image(mascot_path, width=48)
@@ -438,13 +442,11 @@ if nav == "chat":
     # --- 统计指标卡 ---
     s_count = len(st.session_state.sessions)
     m_count = st.session_state.chat_count
-    c_model = st.session_state.get("model", "deepseek")
 
-    cols = st.columns(4)
+    cols = st.columns(3)
     metric_items = [
         ("💬 会话数", s_count),
         ("📝 消息数", m_count),
-        ("🧠 当前模型", c_model.upper()),
         ("🔍 搜索模式", {"knowledge_base": "知识库", "web_search": "联网", "hybrid": "混合"}.get(
             st.session_state.get("search_mode", "knowledge_base"), "知识库")),
     ]
@@ -453,18 +455,14 @@ if nav == "chat":
             st.metric(label, val)
 
     # --- 控制栏（统计区下方，位置固定）---
-    c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
+    c1, c2, c3 = st.columns([2, 1, 1])
     with c1:
         st.selectbox("搜索模式", ["knowledge_base", "web_search", "hybrid"],
                      format_func=lambda x: {"knowledge_base": "📚 知识库", "web_search": "🌐 联网", "hybrid": "🔀 混合"}[x],
                      key="search_mode")
     with c2:
-        st.segmented_control("模型", ["deepseek", "zhipu"],
-                            default=st.session_state.get("model", "deepseek"),
-                            key="model")
-    with c3:
         st.toggle("流式输出", value=True, key="use_stream")
-    with c4:
+    with c3:
         st.checkbox("🔧 功能工具", value=False, key="show_tools")
 
     show_tools = st.session_state.get("show_tools", False)
@@ -516,7 +514,6 @@ if nav == "chat":
                             result = api_send_message(
                                 session_id=st.session_state.current_session_id,
                                 message=new_content,
-                                model=st.session_state.get("model", "deepseek"),
                                 search_mode=st.session_state.get("search_mode", "knowledge_base"),
                             )
                             ans = _handle_chat_result(result)
@@ -551,7 +548,6 @@ if nav == "chat":
                     stream = api_send_message_stream(
                         session_id=st.session_state.current_session_id,
                         message=prompt,
-                        model=st.session_state.get("model", "deepseek"),
                         search_mode=st.session_state.get("search_mode", "knowledge_base"),
                     )
                     for event in stream:
@@ -580,7 +576,6 @@ if nav == "chat":
                                 result = api_send_message(
                                     session_id=st.session_state.current_session_id,
                                     message=prompt,
-                                    model=st.session_state.get("model", "deepseek"),
                                     search_mode=st.session_state.get("search_mode", "knowledge_base"),
                                 )
                                 full_answer = _handle_chat_result(result)
@@ -596,7 +591,6 @@ if nav == "chat":
                         result = api_send_message(
                             session_id=st.session_state.current_session_id,
                             message=prompt,
-                            model=st.session_state.get("model", "deepseek"),
                             search_mode=st.session_state.get("search_mode", "knowledge_base"),
                         )
                         full_answer = _handle_chat_result(result)
@@ -631,41 +625,29 @@ elif nav == "settings":
     # --- 状态概览卡片 ---
     cfg = st.session_state.model_config
     scfg = st.session_state.search_config
-    cols = st.columns(4)
+    cols = st.columns(2)
     with cols[0]:
-        st.metric("默认模型", cfg.get("current_model", "zhipu").upper())
+        st.metric("默认模型", "DeepSeek-v4-Flash")
     with cols[1]:
-        label = "✅ 已配置" if cfg.get("zhipu_available") else "❌ 未配置"
-        st.metric("智谱 GLM", label)
-    with cols[2]:
         label = "✅ 已配置" if cfg.get("deepseek_available") else "❌ 未配置"
-        st.metric("DeepSeek", label)
-    with cols[3]:
-        st.metric("搜索引擎", scfg.get("default_engine", "tavily").title())
-    st.markdown("---")
+        st.metric("API Key", label)
 
     tab1, tab2, tab3 = st.tabs(["🤖 模型配置", "🔍 搜索配置", "👤 个人资料"])
 
     with tab1:
         with st.form("model_form"):
             st.markdown("#### LLM 模型设置")
-            dm = st.selectbox("默认模型", ["zhipu", "deepseek"],
-                              index=0 if cfg.get("current_model") != "deepseek" else 1)
-            zk = st.text_input("智谱 API Key", type="password", placeholder="留空不修改")
             dk = st.text_input("DeepSeek API Key", type="password", placeholder="留空不修改")
             if st.form_submit_button("💾 保存配置", type="primary", use_container_width=True):
                 try:
-                    payload = {"default_llm_model": dm}
-                    if zk.strip(): payload["zhipu_api_key"] = zk.strip()
+                    payload = {}
                     if dk.strip(): payload["deepseek_api_key"] = dk.strip()
                     st.session_state.model_config = api_update_model_config(payload)
                     st.success("配置已保存")
                 except Exception as e:
                     st.error(str(e))
         if cfg:
-            st.caption(f"当前模型: `{cfg.get('current_model')}`  |  "
-                       f"智谱: {'✅' if cfg.get('zhipu_available') else '❌'}  |  "
-                       f"DeepSeek: {'✅' if cfg.get('deepseek_available') else '❌'}")
+            st.caption(f"DeepSeek: {'✅ 已配置' if cfg.get('deepseek_available') else '❌ 未配置'}")
 
     with tab2:
         with st.form("search_form"):

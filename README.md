@@ -40,7 +40,7 @@
 - 用户注册/登录（JWT 认证）
 - 多轮智能对话，支持历史会话管理
 - 知识库 RAG：上传文档（PDF/TXT/MD），混合检索（向量 + BM25）
-- 联网搜索：Tavily / Bing 双引擎
+- 联网搜索：Tavily 实时搜索
 - 对话记忆系统：短期记忆（最近 10 轮）+ 长期记忆自动触发检索
 - 特色工具：职业测评（霍兰德）、简历优化、岗位匹配、面试模拟
 - Streamlit 前端，支持局域网多用户访问
@@ -55,7 +55,7 @@ shuangti-agent/
 │   ├── llm/             # LLM 适配层（智谱 / DeepSeek）
 │   ├── models/          # Pydantic 数据模型
 │   ├── rag/             # RAG 管道（加载/分割/向量化/检索/编排）
-│   ├── search/          # 联网搜索（Tavily / Bing）
+│   ├── search/          # 联网搜索（Tavily）
 │   └── service/         # 业务服务层
 ├── frontend/
 │   ├── app.py           # Streamlit 主页面（智能对话）
@@ -132,7 +132,7 @@ streamlit run frontend/app.py --server.address 0.0.0.0
 | 关系数据库 | SQLite (aiosqlite) |
 | RAG 框架 | LangChain（文本分割） |
 | 检索 | 向量检索 + BM25 + RRF 融合 |
-| 搜索 | Tavily / Bing |
+| 搜索 | Tavily |
 
 ## API 概览
 

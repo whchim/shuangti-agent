@@ -62,7 +62,7 @@ def agent_node(state: AgentState) -> dict[str, Any]:
         - current_tool: 如果 LLM 决定调用工具则赋值
 
     TODO:
-      - [ ] 对接 app/llm/ 下的 LLM 适配器 (zhipu.py / deepseek.py)
+      - [ ] 对接 app/llm/ 下的 LLM 适配器 (deepseek.py)
       - [ ] 实现被 @trace_node("agent_node") 装饰的 OTel 埋点版本
       - [ ] 解析 LLM 输出中的 function_call / tool_calls
       - [ ] 判断 LLM 是否发出最终回复 (无 tool_call)，若是则设置 should_exit=True
