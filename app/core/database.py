@@ -30,7 +30,7 @@ async def init_db():
     CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
         username TEXT UNIQUE NOT NULL,
-        email TEXT UNIQUE NOT NULL,
+        email TEXT NOT NULL DEFAULT '',
         password_hash TEXT NOT NULL,
         avatar TEXT,
         profile_data TEXT DEFAULT '{}',
@@ -135,6 +135,45 @@ async def init_db():
                 await db.execute("CREATE INDEX IF NOT EXISTS idx_messages_user ON messages(user_id)")
                 await db.commit()
                 logger.info("messages 表已重建，数据已保留")
+
+    # 迁移：移除 users.email 的 UNIQUE 约束（注册不再需要邮箱）
+    try:
+        cursor = await db.execute("PRAGMA index_list(users)")
+        indexes = await cursor.fetchall()
+        email_unique_index = None
+        for idx in indexes:
+            if idx[2] == 1:  # unique=1
+                # 检查该唯一索引是否包含 email 列
+                ci = await db.execute(f"PRAGMA index_info({idx[1]})")
+                cols = await ci.fetchall()
+                col_names = [c[2] for c in cols]
+                if "email" in col_names:
+                    email_unique_index = idx[1]
+                    break
+        if email_unique_index:
+            logger.info(f"检测到 users.email 仍有 UNIQUE 约束（索引: {email_unique_index}），迁移中...")
+            await db.execute("PRAGMA foreign_keys=OFF")
+            await db.execute("""
+                CREATE TABLE users_new (
+                    id TEXT PRIMARY KEY,
+                    username TEXT UNIQUE NOT NULL,
+                    email TEXT NOT NULL DEFAULT '',
+                    password_hash TEXT NOT NULL,
+                    avatar TEXT,
+                    profile_data TEXT DEFAULT '{}',
+                    is_active INTEGER DEFAULT 1,
+                    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+                )
+            """)
+            await db.execute("INSERT INTO users_new SELECT id, username, email, password_hash, avatar, profile_data, is_active, created_at, updated_at FROM users")
+            await db.execute("DROP TABLE users")
+            await db.execute("ALTER TABLE users_new RENAME TO users")
+            await db.execute("PRAGMA foreign_keys=ON")
+            await db.commit()
+            logger.info("users 表已重建，email UNIQUE 约束已移除")
+    except Exception as e:
+        logger.warning(f"users 表迁移失败（可忽略）: {e}")
 
     logger.info("数据库表初始化完成")
 
